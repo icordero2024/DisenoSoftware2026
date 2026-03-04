@@ -26,9 +26,30 @@ This project aims to design an intelligent system capable of automating the read
 
 # 1. Frontend Design
 
-## 1.1 Technology stack: tecnología de frontend, de seguridad, librerías de terceros, frameworks, hosting; todos con su respectiva versión 
+## 1.1 Technology stack:
 
-## 1.2 UX UI analysis: Incluye los atributos de usabilidad deseables del aplicativo, un diseño preliminar del UX a modo wireframes, y las evidencias de las pruebas de UX con usuarios reales que validan diseño diseño preliminar
+- Application Type: Web Application (SPA)
+
+- Frontend Framework: React.js v19.2
+- Runtime Environment: Node.js v21
+- Programming Language: TypeScript v5.9.3
+
+- Unit Testing Framework: Jest v30.2.0
+- Integration / End-to-End Testing: Playwright v1.58.2
+
+- Cloud Provider: Microsoft Azure
+- Hosting Service: Azure App Service
+
+- Code Repository: Azure DevOps Repos
+- CI/CD Pipeline: Azure DevOps Pipelines
+- Environment Management: Azure DevOps Environments
+
+- Automated Code Tasks: Husky 9.1.7
+
+- Observability & Monitoring: Azure Application Insights SDK
+
+## 1.2 UX UI analysis: 
+Incluye los atributos de usabilidad deseables del aplicativo, un diseño preliminar del UX a modo wireframes, y las evidencias de las pruebas de UX con usuarios reales que validan diseño diseño preliminar
 
 ## 1.3 Component design strategy: Define la técnica y los principios de diseño de componentes del frontend, cómo se logra la reutilización de componentes, cómo se logra centralizar los estilos, el branding, la internacionalización y la responsividad.
 
