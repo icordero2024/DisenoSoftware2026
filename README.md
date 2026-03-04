@@ -1,16 +1,25 @@
 # DUA Streamliner
 
-## Problema que se quiere resolver
+## Problem Statement
 
-El proceso de llenado del Documento Único Aduanero (DUA) es manual y repetitivo, ya que requiere interpretar múltiples documentos fuente en diferentes formatos como Excel, Word, PDF e imágenes escaneadas.
+The preparation of the DUA is a critical step in import and export operations in Costa Rica. The DUA consolidates key information about the importer or exporter, consignee, goods description, customs regime, declared values, taxes, transportation details, and supporting documentation.
 
-Debido a que estos documentos no siguen una estructura estándar y pueden variar entre proveedores, su interpretación requiere conocimiento experto, lo que vuelve el proceso lento y aumenta el riesgo de errores.
+Currently, the DUA is completed manually by interpreting multiple source documents such as commercial invoices, packing lists, certificates of origin, bills of lading, insurance policies, and special permits. These documents may come in different formats including Excel files, Word documents, PDFs, and scanned images.
 
-Este proyecto busca diseñar una solución que permita automatizar la lectura, extracción y mapeo inteligente de información hacia el template oficial del DUA.
+Because these documents do not follow a standardized structure and may vary significantly between suppliers or companies, the interpretation process requires specialized domain knowledge. As a result, the preparation of the DUA becomes:
+
+- Time-consuming and operationally repetitive  
+- Highly dependent on expert interpretation  
+- Prone to human errors and inconsistencies  
+- Vulnerable to delays, penalties, or customs rejections  
+
+In addition, extracting relevant data from heterogeneous document formats requires manual reading, cross-checking values, validating totals, and mapping information into the official DUA template defined by the Costa Rican customs authority.
+
+This project aims to design an intelligent system capable of automating the reading, semantic extraction, validation, and mapping of information from multiple document sources into the official DUA template. The goal is not to replace customs experts, but to transform their role from manual data entry operators into strategic validators, reducing operational workload and minimizing errors.
 
 ---
 
-## Autores
+## Authors
 
-- Andrés Ramírez Madrigal
-- Ignacio Cordero Chinchilla
+- Andrés Ramírez Madrigal  
+- Ignacio Cordero Chinchilla  
