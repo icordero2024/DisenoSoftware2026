@@ -28,25 +28,33 @@ This project aims to design an intelligent system capable of automating the read
 
 ## 1.1 Technology stack:
 
-- Application Type: Web Application (SPA)
+## 1.1 Technology Stack
 
-- Frontend Framework: React.js v19.2
-- Runtime Environment: Node.js v21
-- Programming Language: TypeScript v5.9.3
+- Application Type: Web Application
+
+- Web Framework: React.js v19.2
+- Web Server: Node.js v21
+- Coding Language: TypeScript v5.9.3
 
 - Unit Testing Framework: Jest v30.2.0
-- Integration / End-to-End Testing: Playwright v1.58.2
+- Integration Testing Tool: Playwright v1.58.2
 
-- Cloud Provider: Microsoft Azure
-- Hosting Service: Azure App Service
+- Data Validation Framework: Zod v3.23.8
+- Code Prettier Framework: Prettier v3.3.3
+- Code Style Framework: ESLint v9.10.0
 
-- Code Repository: Azure DevOps Repos
-- CI/CD Pipeline: Azure DevOps Pipelines
-- Environment Management: Azure DevOps Environments
+- Cloud Service: Microsoft Azure
+- Hosted Service within Cloud: Azure App Service
 
-- Automated Code Tasks: Husky 9.1.7
+- Code Repository Service: Azure DevOps Repos
+- Code Automation Task Tool: Husky v9.1.7
 
-- Observability & Monitoring: Azure Application Insights SDK
+- CI/CD Pipelines Technology: Azure DevOps Pipelines
+
+- Environments: Development, QA, Staging, Production
+- Environment Deployment Tools: Azure DevOps Environments + Azure App Service Deployment Slots
+
+- Observability Framework: Azure Application Insights SDK v3.x
 
 ## 1.2 UX UI analysis: 
 Incluye los atributos de usabilidad deseables del aplicativo, un diseño preliminar del UX a modo wireframes, y las evidencias de las pruebas de UX con usuarios reales que validan diseño diseño preliminar
