@@ -64,7 +64,7 @@ This section describes the user interaction flow across the main screens of the 
 
 ---
 
-### 1. Login
+#### 1. Login
 
 1. The user accesses the system and provides their login credentials and a one-time authentication token.
 
@@ -76,7 +76,7 @@ This section describes the user interaction flow across the main screens of the 
 
 ---
 
-### 2. Configure the Generator
+#### 2. Configure the Generator
 
 1. The user accesses the generator configuration section to prepare a new DUA generation process.
 
@@ -102,7 +102,7 @@ This section describes the user interaction flow across the main screens of the 
 
 ---
 
-### 3. Monitoring the Progress
+#### 3. Monitoring the Progress
 
 1. The user accesses the monitoring section to track the progress of the generation process.
 
@@ -114,7 +114,7 @@ This section describes the user interaction flow across the main screens of the 
 
 ---
 
-### 4. Obtain the Result / Export
+#### 4. Obtain the Result / Export
 
 1. The user accesses the generated results once the process has finished.
 
@@ -126,15 +126,15 @@ This section describes the user interaction flow across the main screens of the 
 
 ---
 
-### 5. Logout
+#### 5. Logout
 
 1. The user decides to terminate the session.
 
 2. The system invalidates the active session and returns the user to the initial access screen.
 
-## Wireframes
+### Wireframes
 
-### Login Screen
+#### Login Screen
 
 This screen allows the user to authenticate into the system using their username, password, and one-time authentication token.
 
@@ -142,7 +142,7 @@ This screen allows the user to authenticate into the system using their username
 
 ---
 
-### Configure Generator
+#### Configure Generator
 
 This screen allows the user to configure the DUA generation process.  
 The user selects the folder containing the source documents and chooses the official DUA template that will be used for the generation process.
@@ -151,7 +151,7 @@ The user selects the folder containing the source documents and chooses the offi
 
 ---
 
-### Monitoring Progress
+#### Monitoring Progress
 
 This screen allows the user to monitor the progress of the document processing and information extraction process.  
 The system displays the different stages involved in generating the DUA document.
@@ -160,7 +160,7 @@ The system displays the different stages involved in generating the DUA document
 
 ---
 
-### Result / Export
+#### Result / Export
 
 This screen allows the user to retrieve the generated DUA document once the process has finished successfully.
 
@@ -168,7 +168,7 @@ This screen allows the user to retrieve the generated DUA document once the proc
 
 ---
 
-### Logout
+#### Logout
 
 This screen allows the user to confirm the termination of the active session.
 
