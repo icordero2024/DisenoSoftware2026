@@ -132,6 +132,48 @@ This section describes the user interaction flow across the main screens of the 
 
 2. The system invalidates the active session and returns the user to the initial access screen.
 
+## Wireframes
+
+### Login Screen
+
+This screen allows the user to authenticate into the system using their username, password, and one-time authentication token.
+
+![Login Wireframe](images/login.png)
+
+---
+
+### Configure Generator
+
+This screen allows the user to configure the DUA generation process.  
+The user selects the folder containing the source documents and chooses the official DUA template that will be used for the generation process.
+
+![Configure Generator Wireframe](images/generator.png)
+
+---
+
+### Monitoring Progress
+
+This screen allows the user to monitor the progress of the document processing and information extraction process.  
+The system displays the different stages involved in generating the DUA document.
+
+![Monitoring Progress Wireframe](images/process.png)
+
+---
+
+### Result / Export
+
+This screen allows the user to retrieve the generated DUA document once the process has finished successfully.
+
+![Result Export Wireframe](images/result.png)
+
+---
+
+### Logout
+
+This screen allows the user to confirm the termination of the active session.
+
+![Logout Wireframe](images/logout.png)
+
 ## 1.3 Component design strategy: Define la técnica y los principios de diseño de componentes del frontend, cómo se logra la reutilización de componentes, cómo se logra centralizar los estilos, el branding, la internacionalización y la responsividad.
 
 ## 1.4 Security: Tecnologías, técnicas y classes con su respectiva ubicación en la estructura del proyecto responsables de la autenticación y la autorización de permisos y sesiones. 
