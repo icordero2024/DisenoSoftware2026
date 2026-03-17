@@ -31,29 +31,21 @@ This project aims to design an intelligent system capable of automating the read
 ## 1.1 Technology Stack
 
 - Application Type: Web Application
-
 - Web Framework: React.js v19.2
 - Web Server: Node.js v21
 - Coding Language: TypeScript v5.9.3
-
 - Unit Testing Framework: Jest v30.2.0
 - Integration Testing Tool: Playwright v1.58.2
-
 - Data Validation Framework: Zod v3.23.8
 - Code Prettier Framework: Prettier v3.3.3
 - Code Style Framework: ESLint v9.10.0
-
 - Cloud Service: Microsoft Azure
 - Hosted Service within Cloud: Azure App Service
-
 - Code Repository Service: Azure DevOps Repos
 - Code Automation Task Tool: Husky v9.1.7
-
 - CI/CD Pipelines Technology: Azure DevOps Pipelines
-
 - Environments: Development, QA, Staging, Production
 - Environment Deployment Tools: Azure DevOps Environments + Azure App Service Deployment Slots
-
 - Observability Framework: Azure Application Insights SDK v3.x
 
 ## 1.2 UX UI analysis: 
@@ -174,12 +166,229 @@ This screen allows the user to confirm the termination of the active session.
 
 ![Logout Wireframe](images/logout.png)
 
-## 1.3 Component design strategy: Define la técnica y los principios de diseño de componentes del frontend, cómo se logra la reutilización de componentes, cómo se logra centralizar los estilos, el branding, la internacionalización y la responsividad.
+## 1.3 Component Design Strategy: Define the technique and principles used for frontend component design. Explain how component reuse is achieved, and how styles, branding, internationalization, and responsiveness are centralized.
 
-## 1.4 Security: Tecnologías, técnicas y classes con su respectiva ubicación en la estructura del proyecto responsables de la autenticación y la autorización de permisos y sesiones. 
+## Frontend Development & Deployment Libraries
 
-## 1.5 Layered design: diseño y explicación de las diversas capas de la aplicación en el frontend. 
+Based on the defined technology stack, the following libraries are recommended to enhance frontend development, architecture, and deployment readiness.
 
-## 1.6  Design patterns: Diseño de classes con su respectiva ubicación en la estructura del proyecto, donde sea necesario aplicar patrones de diseño orientado a objetos, como por ejemplo: seguridad, refrescado de UI, recepción de notificaciones, almacenamiento de estados, llamadas a api, operaciones asíncronas, invalidación de sesiones, programación por eventos, creación de objetos. 
+---
 
-## 1.7 un folder en /src que contiene el scaffold del proyecto, el cual se genera a partir de toda la especificación de los puntos del 1.1 al 1.6. 
+### Routing
+- **react-router-dom**  
+Provides client-side routing and navigation. Enables protected routes, workflow transitions (login → configuration → monitoring → results), and URL-based state management.
+
+---
+
+### Authentication / Authorization
+- **@azure/msal-browser**  
+- **@azure/msal-react**  
+Used to integrate Microsoft Entra ID authentication using OAuth 2.0 / OpenID Connect. Supports secure login, token acquisition, and session handling in React applications.
+
+---
+
+### Server State Management
+- **@tanstack/react-query**  
+Handles asynchronous server state, including API calls, caching, polling, retries, and invalidation. Particularly useful for monitoring processes and retrieving results.
+
+---
+
+### Client State Management
+- **zustand**  
+Lightweight global state management for frontend data such as UI state, temporary configurations, workflow progress, and non-sensitive session data.
+
+---
+
+### Observability
+- **@microsoft/applicationinsights-web**  
+- **@microsoft/applicationinsights-react-js**  
+Provides telemetry, error tracking, and user behavior monitoring. Integrates with Azure Application Insights for centralized observability.
+
+---
+
+### Internationalization
+- **i18next**  
+- **react-i18next**  
+Enables centralized management of translations, language switching, and localization across the application.
+
+---
+
+### HTTP Communication (Adapter Support)
+- **axios**  
+Used as the HTTP client for API communication. Supports interceptors, request/response transformation, and centralized error handling.
+
+#### Adapter Pattern Strategy
+The Adapter pattern is implemented using TypeScript classes that wrap API communication logic. These adapters:
+- Abstract backend API structure
+- Transform responses into frontend-friendly formats
+- Centralize error handling
+- Decouple frontend components from backend changes
+
+Examples:
+- `AuthApiAdapter`
+- `GeneratorApiAdapter`
+- `MonitoringApiAdapter`
+- `ExportApiAdapter`
+
+---
+
+### Dependency Injection / Singleton Management
+- **tsyringe** 
+
+Used to manage shared services and enforce Singleton instances across the application.
+
+#### Singleton Pattern Strategy
+Singletons are used for services such as:
+- Authentication manager
+- Configuration service
+- Telemetry service
+- Event bus / notification handler
+
+These can be implemented using:
+- Native TypeScript singletons (simpler approach), or
+- `tsyringe` for dependency injection and better scalability
+
+---
+
+### Build Tool
+- **vite**  
+Modern frontend build tool that provides fast development server startup, optimized builds, and improved developer experience.
+
+---
+
+## Recommended Library Set
+
+```txt
+react-router-dom
+@azure/msal-browser
+@azure/msal-react
+@tanstack/react-query
+zustand
+@microsoft/applicationinsights-web
+@microsoft/applicationinsights-react-js
+i18next
+react-i18next
+axios
+tsyringe
+vite
+```
+
+## 1.4 Security: Technologies, techniques, and classes—along with their respective locations in the project structure—responsible for authentication, authorization of permissions, and session management.
+---
+
+### Authentication
+
+- Identity Provider: Microsoft Entra ID  
+- Authentication Model: Single Sign-On (SSO)  
+- Protocol: OAuth 2.0 / OpenID Connect  
+- Libraries:
+  - `@azure/msal-browser`
+  - `@azure/msal-react`
+
+---
+
+### Authorization
+
+Authorization is enforced at two levels:
+
+- Frontend:
+  - Route protection
+  - Permission validation based on roles/scopes
+- Backend:
+  - Token validation
+  - Enforcement of access control policies
+
+---
+
+### Session Management
+
+- Token acquisition and caching handled by MSAL
+- Storage strategy:
+  - `sessionStorage` for session persistence
+  - `memoryStorage` for stricter security (optional)
+- Session is cleared on logout
+- Cached data is invalidated after session termination
+
+---
+
+### Data Storage Strategy
+
+#### 1. Public Configuration (Frontend)
+
+Stored in:
+- Azure App Service (Application Settings)
+- Environment variables per environment
+
+Includes:
+- API base URL
+- Environment name
+- Application Insights configuration
+- Entra ID tenant ID and client ID
+
+---
+
+#### 2. Sensitive Data
+
+Stored in:
+- **Azure Key Vault**
+
+Includes:
+- API keys
+- Secrets
+- Certificates
+- Signing keys
+- Backend credentials
+
+---
+
+#### 3. CI/CD Secrets
+
+Stored in:
+- Azure DevOps Variable Groups
+- Azure DevOps linked to Azure Key Vault
+
+---
+
+#### 4. Client-side State
+
+Stored in:
+- Zustand (non-sensitive only)
+
+Includes:
+- UI state
+- workflow progress
+- temporary configuration data
+
+Sensitive data is never stored in frontend state or browser storage.
+
+---
+
+### Secure Storage Service
+
+- Azure Key Vault
+
+Used for:
+- Secrets
+- Keys
+- Certificates
+- Environment-sensitive configuration
+
+Access controlled through:
+- Azure RBAC
+
+---
+
+### Environment Configuration Flow
+
+1. Secrets stored in Azure Key Vault  
+2. Azure DevOps retrieves secrets via variable groups  
+3. Deployment injects configuration into Azure App Service  
+4. Frontend consumes only non-sensitive environment variables  
+5. Backend accesses sensitive data securely from Key Vault  
+
+
+## 1.5 Layered Design: Design and explanation of the different layers of the frontend application.
+
+## 1.6 Design Patterns: Design of classes and their respective locations in the project structure where object-oriented design patterns are applied when necessary. Examples include: security, UI refresh, notification handling, state storage, API calls, asynchronous operations, session invalidation, event-driven programming, and object creation.
+
+## 1.7 Project Scaffold: A folder in /src containing the project scaffold, generated based on the full specification defined in sections 1.1 through 1.6.
