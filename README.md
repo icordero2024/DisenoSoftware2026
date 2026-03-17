@@ -19,8 +19,6 @@ This project aims to design an intelligent system capable of automating the read
 
 ---
 
-##PRUEBA
-
 ## Authors
 
 - Andrés Ramírez Madrigal  
