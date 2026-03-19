@@ -230,23 +230,23 @@ The test did not require users to click on exact interactive elements. Any click
 
 #### Heatmap - Login Screen
 
-![Login Heatmap](images/heatmap1.png)
+![Login Heatmap](images/heatmap1.jpg)
 
 #### Heatmap - Configure Generator
 
-![Configure Heatmap](images/heatmap2.png)
+![Configure Heatmap](images/heatmap2.jpg)
 
 #### Heatmap - Monitoring Progress
 
-![Monitoring Heatmap](images/heatmap3.png)
+![Monitoring Heatmap](images/heatmap3.jpg)
 
 #### Heatmap - Result
 
-![Result Heatmap](images/heatmap4.png)
+![Result Heatmap](images/heatmap4.jpg)
 
 #### Heatmap - Logout
 
-![Logout Heatmap](images/heatmap5.png)
+![Logout Heatmap](images/heatmap5.jpg)
 
 ## 1.3 Component Design Strategy: Define the technique and principles used for frontend component design. Explain how component reuse is achieved, and how styles, branding, internationalization, and responsiveness are centralized.
 
