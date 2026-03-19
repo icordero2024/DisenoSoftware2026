@@ -26,9 +26,7 @@ This project aims to design an intelligent system capable of automating the read
 
 # 1. Frontend Design
 
-## 1.1 Technology stack:
-
-## 1.1 Technology Stack
+## 1.1 Technology stack
 
 - Application Type: Web Application
 - Web Framework: React.js v19.2
@@ -69,6 +67,9 @@ All interactions follow a consistent workflow and predictable behavior across al
 
 - Simplicity  
 The interface is designed to minimize complexity and avoid unnecessary actions or decisions.
+
+- Visibility of System Status  
+The system clearly communicates processing stages and data confidence levels, ensuring users always understand the current state of the operation.
 
 ### Core Business Process
 
@@ -248,112 +249,135 @@ The test did not require users to click on exact interactive elements. Any click
 
 ![Logout Heatmap](images/heatmap5.jpg)
 
-## 1.3 Component Design Strategy: Define the technique and principles used for frontend component design. Explain how component reuse is achieved, and how styles, branding, internationalization, and responsiveness are centralized.
+## 1.3 Component Design Strategy
 
-## Frontend Development & Deployment Libraries
-
-Based on the defined technology stack, the following libraries are recommended to enhance frontend development, architecture, and deployment readiness.
+The frontend component design follows a structured and reusable approach based on Atomic Design principles, combined with centralized styling, internationalization, and responsive design strategies.
 
 ---
 
-### Routing
-- **react-router-dom**  
-Provides client-side routing and navigation. Enables protected routes, workflow transitions (login → configuration → monitoring → results), and URL-based state management.
+### Component Design Technique
+
+The application uses the Atomic Design methodology to structure UI components into hierarchical levels:
+
+- **Atoms**  
+  Basic UI elements such as buttons, inputs, labels, icons, and loaders.
+
+- **Molecules**  
+  Combinations of atoms forming functional units, such as form fields, file selectors, and status indicators.
+
+- **Organisms**  
+  Complex UI sections composed of multiple molecules, such as:
+  - Login form
+  - Generator configuration panel
+  - Progress monitoring panel
+  - Data review table
+
+- **Templates**  
+  Page-level layouts that define structure without specific data.
+
+- **Pages**  
+  Fully instantiated views connected to application state and API data.
+
+This structure ensures scalability, separation of concerns, and maintainability.
 
 ---
 
-### Authentication / Authorization
-- **@azure/msal-browser**  
-- **@azure/msal-react**  
-Used to integrate Microsoft Entra ID authentication using OAuth 2.0 / OpenID Connect. Supports secure login, token acquisition, and session handling in React applications.
+### Component Reusability Strategy
+
+Reusability is achieved through:
+
+- Clear separation between presentational and container components  
+- Stateless UI components (atoms and molecules)  
+- Prop-driven configuration for flexible behavior  
+- Shared hooks for logic reuse (e.g., `useAuth`, `useGenerator`, `useMonitoring`)  
+- API abstraction through adapters, preventing coupling with backend structures  
 
 ---
 
-### Server State Management
-- **@tanstack/react-query**  
-Handles asynchronous server state, including API calls, caching, polling, retries, and invalidation. Particularly useful for monitoring processes and retrieving results.
+### Styling & Branding Strategy
+
+Styling is centralized using a design system approach:
+
+- Tailwind CSS is used for utility-based styling  
+- Global design tokens define:
+  - Colors (including confidence levels: green, yellow, red)
+  - Typography
+  - Spacing and layout rules  
+
+- A shared theme configuration ensures consistent branding across all components, including colors, typography, and visual identity aligned with the system purpose  
+
+- UI states (hover, focus, error, loading) are standardized across the application  
 
 ---
 
-### Client State Management
-- **zustand**  
-Lightweight global state management for frontend data such as UI state, temporary configurations, workflow progress, and non-sensitive session data.
+### Internationalization (i18n)
+
+Internationalization is implemented using a centralized translation system:
+
+- All user-facing text is managed through translation files  
+- Components consume translations via hooks (e.g., `useTranslation`)  
+- Language switching is handled globally without affecting component structure  
+
+This ensures scalability for multi-language support without modifying component logic.
 
 ---
 
-### Observability
-- **@microsoft/applicationinsights-web**  
-- **@microsoft/applicationinsights-react-js**  
-Provides telemetry, error tracking, and user behavior monitoring. Integrates with Azure Application Insights for centralized observability.
+### Responsiveness Strategy
+
+The application is fully responsive and adapts to different screen sizes:
+
+- Mobile-first design approach  
+- Responsive breakpoints defined in the styling system  
+- Flexible layouts using grid and flexbox  
+- Components designed to adapt dynamically (e.g., tables collapse into cards on smaller screens)  
 
 ---
 
-### Internationalization
-- **i18next**  
-- **react-i18next**  
-Enables centralized management of translations, language switching, and localization across the application.
+### State & UI Synchronization
+
+Components remain synchronized with application state through:
+
+- Server state handled by React Query (data fetching, caching, polling)  
+- Client state handled via lightweight global stores  
+- Real-time UI updates for:
+  - Processing status
+  - Data confidence visualization
+  - Error and success feedback  
 
 ---
 
-### HTTP Communication (Adapter Support)
-- **axios**  
-Used as the HTTP client for API communication. Supports interceptors, request/response transformation, and centralized error handling.
+### Key Design Principles
 
-#### Adapter Pattern Strategy
-The Adapter pattern is implemented using TypeScript classes that wrap API communication logic. These adapters:
-- Abstract backend API structure
-- Transform responses into frontend-friendly formats
-- Centralize error handling
-- Decouple frontend components from backend changes
-
-Examples:
-- `AuthApiAdapter`
-- `GeneratorApiAdapter`
-- `MonitoringApiAdapter`
-- `ExportApiAdapter`
+- Separation of concerns  
+- High cohesion and low coupling  
+- Reusability and scalability  
+- Predictable state management  
+- Clear visual communication (especially for AI confidence levels)  
 
 ---
 
-### Dependency Injection / Singleton Management
-- **tsyringe** 
+### Implementation Conventions
 
-Used to manage shared services and enforce Singleton instances across the application.
+The component design follows specific implementation conventions to ensure consistency and alignment with project standards:
 
-#### Singleton Pattern Strategy
-Singletons are used for services such as:
-- Authentication manager
-- Configuration service
-- Telemetry service
-- Event bus / notification handler
+- **Atomic Design Usage**  
+Components follow the previously defined Atomic Design structure.
 
-These can be implemented using:
-- Native TypeScript singletons (simpler approach), or
-- `tsyringe` for dependency injection and better scalability
+- **CSS Centralization**  
+Each component type maintains a single centralized style file to ensure consistency and avoid style duplication.
 
----
+- **CSS Naming Convention**  
+CSS class names follow a structured pattern:  
+`ComponentName-StyleName`  
 
-### Build Tool
-- **vite**  
-Modern frontend build tool that provides fast development server startup, optimized builds, and improved developer experience.
+- **Responsive Units**  
+All positional and layout units use `em` to ensure consistent scalability and responsiveness across devices.
 
----
+- **Internationalization Support**  
+All components are compatible with `react-i18next v16.5.8`, ensuring that text content is fully externalized and translatable.
 
-## Recommended Library Set
-
-```txt
-react-router-dom
-@azure/msal-browser
-@azure/msal-react
-@tanstack/react-query
-zustand
-@microsoft/applicationinsights-web
-@microsoft/applicationinsights-react-js
-i18next
-react-i18next
-axios
-tsyringe
-vite
-```
+- **Accessibility**  
+Accessibility requirements are not considered within the scope of this implementation.
 
 ## 1.4 Security: Technologies, techniques, and classes—along with their respective locations in the project structure—responsible for authentication, authorization of permissions, and session management.
 ---
