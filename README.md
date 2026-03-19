@@ -50,6 +50,26 @@ This project aims to design an intelligent system capable of automating the read
 
 ## 1.2 UX UI analysis: 
 
+### Usability Attributes
+
+- Learnability  
+The system provides a linear and guided workflow (login → configuration → monitoring → result), allowing new users to quickly understand how to use the application.
+
+- Efficiency  
+Users can complete the DUA generation process with minimal steps by selecting documents and templates within a single flow.
+
+- Error Prevention  
+The system validates documents and templates before starting the generation process, reducing the likelihood of failures.
+
+- Feedback  
+The system continuously informs the user about the process status, including validation errors, processing stages, and completion notifications.
+
+- Consistency  
+All interactions follow a consistent workflow and predictable behavior across all screens.
+
+- Simplicity  
+The interface is designed to minimize complexity and avoid unnecessary actions or decisions.
+
 ### Core Business Process
 
 This section describes the user interaction flow across the main screens of the application. The description focuses only on user actions and system responses.
@@ -165,6 +185,68 @@ This screen allows the user to retrieve the generated DUA document once the proc
 This screen allows the user to confirm the termination of the active session.
 
 ![Logout Wireframe](images/logout.png)
+
+---
+
+### UX Testing Results
+
+A usability test was conducted with three participants who are not familiar with software design.
+
+The objective of the test was to evaluate how intuitive the wireframes are by analyzing where users naturally clicked when attempting to complete each task.
+
+#### Testing Method
+
+Participants were asked to complete tasks corresponding to the main workflow (login, configuration, monitoring, and export).
+
+The test did not require users to click on exact interactive elements. Any click was considered as task completion. This approach allowed observation of user intuition and interaction patterns based on where they expected actions to occur.
+
+#### Metrics
+
+- Number of participants: 3  
+- Task completion rate: 100%  
+- Interaction analysis: Based on click distribution (heatmaps)  
+- Misclicks: Observed through clicks outside expected interaction areas  
+
+#### Observations
+
+- Users consistently clicked on areas that aligned with expected interaction zones across most screens.
+- The login, monitoring, and result stages were clearly understood by all participants.
+- Interaction patterns indicate that the layout and structure effectively guide user actions.
+- Minor variations in click behavior were observed but did not affect task completion.
+
+#### Insights
+
+- The overall workflow is intuitive and easy to follow, even for users without prior knowledge of the system.
+- Visual hierarchy and element positioning successfully communicate possible actions.
+- The interface supports natural user interaction with minimal confusion.
+
+#### Improvements Identified
+
+- Minor refinements can be made to further reinforce key interaction areas.
+- Additional visual cues could improve clarity in edge cases without impacting the current usability.
+
+
+### UX Testing Evidence
+
+#### Heatmap - Login Screen
+
+![Login Heatmap](images/heatmap1.png)
+
+#### Heatmap - Configure Generator
+
+![Configure Heatmap](images/heatmap2.png)
+
+#### Heatmap - Monitoring Progress
+
+![Monitoring Heatmap](images/heatmap3.png)
+
+#### Heatmap - Result
+
+![Result Heatmap](images/heatmap4.png)
+
+#### Heatmap - Logout
+
+![Logout Heatmap](images/heatmap5.png)
 
 ## 1.3 Component Design Strategy: Define the technique and principles used for frontend component design. Explain how component reuse is achieved, and how styles, branding, internationalization, and responsiveness are centralized.
 
