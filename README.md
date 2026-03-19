@@ -471,6 +471,167 @@ Access controlled through:
 
 ## 1.5 Layered Design: Design and explanation of the different layers of the frontend application.
 
+The frontend application follows a layered architecture to ensure separation of concerns, scalability, and maintainability.
+
+---
+
+### Rendering and Entry Point
+
+The application is deployed in Azure App Service using Node.js and React.
+
+The frontend supports server-side rendering (SSR) for initial request handling and improved performance.
+
+When a request is received:
+
+- If no authenticated session exists, the Authentication Layer is invoked
+- If authentication is successful, the application proceeds to render the UI through the Components Layer
+
+---
+
+### Authentication Layer
+
+Responsible for user authentication and session validation.
+
+- Integrates with Microsoft Entra ID using OAuth 2.0 / OpenID Connect
+- Manages authentication state and session lifecycle
+- Controls access to protected resources
+
+---
+
+### Components Layer
+
+Responsible for rendering the user interface.
+
+- Implements Atomic Design (atoms, molecules, organisms, templates, pages)
+- Handles user interactions and visual representation
+- Delegates logic to hooks and services
+
+---
+
+### Hooks Layer
+
+Acts as an intermediary between UI components and business logic.
+
+- Handles user actions and side effects
+- Connects components with the Services Layer
+- Manages local UI logic and state synchronization
+
+---
+
+### Services Layer
+
+Contains the core application logic.
+
+- Handles business operations such as DUA generation, monitoring, and export
+- Orchestrates API calls and data transformations
+- Coordinates interactions between different layers
+
+---
+
+### ApiClients Layer
+
+Responsible for communication with external services.
+
+- Implements HTTP calls using axios
+- Encapsulates API endpoints and request logic
+- Retrieves configuration from the Settings Layer
+
+---
+
+### Settings Layer
+
+Manages application configuration.
+
+- Reads environment variables from Azure App Service
+- Accesses sensitive data from Azure Key Vault
+- Provides API URLs, keys, and environment-specific configurations
+
+---
+
+### Data Validation Layer
+
+Ensures data integrity across the application.
+
+- Implemented using Zod
+- Validates API requests and responses
+- Enforces data contracts between layers
+
+---
+
+### Models Layer
+
+Defines the data structures used across the application.
+
+- Shared between Services, ApiClients, and Components
+- Represents domain entities such as DUA data, documents, and responses
+
+---
+
+### State Management Layer
+
+Manages application state.
+
+- Server state handled by React Query (async data, caching, polling)
+- Client state handled by Zustand (UI state, workflow progress)
+
+---
+
+### Notification Layer
+
+Handles event-driven communication.
+
+- Allows subscription to asynchronous events
+- Used for process updates and long-running operations
+- Enables callback-based updates from backend services
+
+---
+
+### Utils Layer
+
+Provides reusable utility functions.
+
+- Common helpers used across multiple layers
+- Includes formatting, parsing, and shared logic
+
+---
+
+### Logging and Observability Layer
+
+Responsible for monitoring and diagnostics.
+
+- Logs system events and errors
+- Integrated with Azure Application Insights
+- Enables tracking of user behavior and system performance
+
+---
+
+### Exception Handling Layer
+
+Provides centralized error handling.
+
+- Captures and standardizes errors across all layers
+- Prevents application crashes
+- Ensures consistent error responses
+
+---
+
+### Layer Interaction Rules
+
+- Components interact only with Hooks
+- Hooks interact with Services
+- Services interact with ApiClients, Utils, Models, and Settings
+- ApiClients interact with external APIs
+- All layers can use Models, Utils, and State Management
+- Cross-layer communication is handled through the Notification Layer
+
+---
+
+### High-Level Flow
+
+User → Browser → Azure App Service → SSR → Authentication → Components → Hooks → Services → ApiClients → External APIs
+
+External APIs → Notification Layer → Services → Hooks → Components → UI Update
+
 ## 1.6 Design Patterns: Design of classes and their respective locations in the project structure where object-oriented design patterns are applied when necessary. Examples include: security, UI refresh, notification handling, state storage, API calls, asynchronous operations, session invalidation, event-driven programming, and object creation.
 
 ## 1.7 Project Scaffold: A folder in /src containing the project scaffold, generated based on the full specification defined in sections 1.1 through 1.6.
