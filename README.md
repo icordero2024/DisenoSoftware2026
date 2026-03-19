@@ -519,32 +519,18 @@ Access controlled through Azure RBAC.
 5. Backend securely accesses sensitive data  
 
 
-## 1.5 Layered Design: Design and explanation of the different layers of the frontend application.
+## 1.5 Layered Design
 
 The frontend application follows a layered architecture to ensure separation of concerns, scalability, and maintainability.
 
 ---
 
-### Rendering and Entry Point
+### Rendering Flow
 
-The application is deployed in Azure App Service using Node.js and React.
+The frontend performs Server-Side Rendering (SSR) using Node.js and React in Azure App Service.
 
-The frontend supports server-side rendering (SSR) for initial request handling and improved performance.
-
-When a request is received:
-
-- If no authenticated session exists, the Authentication Layer is invoked
-- If authentication is successful, the application proceeds to render the UI through the Components Layer
-
----
-
-### Authentication Layer
-
-Responsible for user authentication and session validation.
-
-- Integrates with Microsoft Entra ID using OAuth 2.0 / OpenID Connect
-- Manages authentication state and session lifecycle
-- Controls access to protected resources
+- If no authenticated session exists, the Authentication Layer is invoked  
+- If authentication is successful, the visual resource is rendered through the Components Layer  
 
 ---
 
@@ -552,39 +538,49 @@ Responsible for user authentication and session validation.
 
 Responsible for rendering the user interface.
 
-- Implements Atomic Design (atoms, molecules, organisms, templates, pages)
-- Handles user interactions and visual representation
-- Delegates logic to hooks and services
+- Follows Atomic Design:
+  - Atoms → Molecules → Organisms → Templates → Pages  
+- Handles user interaction and visual representation  
+
+Within this layer, a **Hooks Layer** is used to connect UI actions with business logic.
 
 ---
 
 ### Hooks Layer
 
-Acts as an intermediary between UI components and business logic.
+Acts as the connection between UI components and application logic.
 
-- Handles user actions and side effects
-- Connects components with the Services Layer
-- Manages local UI logic and state synchronization
+- Captures user interactions  
+- Manages local UI state and side effects  
+- Delegates operations to the Services Layer  
 
 ---
 
 ### Services Layer
 
-Contains the core application logic.
+Contains the core application operations.
 
-- Handles business operations such as DUA generation, monitoring, and export
-- Orchestrates API calls and data transformations
-- Coordinates interactions between different layers
+- Handles DUA generation, monitoring, and export processes  
+- Orchestrates business logic  
+- Coordinates API interactions  
+
+Services may access:
+
+- Utils  
+- ApiClients  
+- Settings  
 
 ---
 
 ### ApiClients Layer
 
-Responsible for communication with external services.
+Responsible for communication with external APIs.
 
-- Implements HTTP calls using axios
-- Encapsulates API endpoints and request logic
-- Retrieves configuration from the Settings Layer
+- Implements HTTP calls using axios  
+- Encapsulates endpoints and request logic  
+- Reads API URLs and keys from the Settings Layer  
+
+All requests and responses use Models validated by the Data Validation Layer.
 
 ---
 
@@ -592,28 +588,28 @@ Responsible for communication with external services.
 
 Manages application configuration.
 
-- Reads environment variables from Azure App Service
-- Accesses sensitive data from Azure Key Vault
-- Provides API URLs, keys, and environment-specific configurations
+- Reads environment variables from Azure App Service  
+- Accesses secure configuration from Azure Key Vault  
+- Provides API URLs, environment settings, and identifiers  
 
 ---
 
 ### Data Validation Layer
 
-Ensures data integrity across the application.
+Ensures data integrity across the system.
 
-- Implemented using Zod
-- Validates API requests and responses
-- Enforces data contracts between layers
+- Implemented using Zod  
+- Validates all API requests and responses  
+- Enforces data contracts using Models  
 
 ---
 
 ### Models Layer
 
-Defines the data structures used across the application.
+Defines shared data structures.
 
-- Shared between Services, ApiClients, and Components
-- Represents domain entities such as DUA data, documents, and responses
+- Used across Services, ApiClients, and Components  
+- Represents domain entities such as DUA data and process results  
 
 ---
 
@@ -621,37 +617,40 @@ Defines the data structures used across the application.
 
 Manages application state.
 
-- Server state handled by React Query (async data, caching, polling)
-- Client state handled by Zustand (UI state, workflow progress)
+- Server state handled by React Query  
+- Client state handled by Zustand  
+
+All layers can access state when required.
 
 ---
 
-### Notification Layer
+### Notification Service Layer
 
-Handles event-driven communication.
+Handles asynchronous communication.
 
-- Allows subscription to asynchronous events
-- Used for process updates and long-running operations
-- Enables callback-based updates from backend services
+- Allows layers to subscribe to events  
+- Supports callback-based updates from external APIs  
+- Used for long-running processes such as DUA generation  
+
+All asynchronous API interactions are handled via callbacks through this layer.
 
 ---
 
 ### Utils Layer
 
-Provides reusable utility functions.
+Provides reusable helper functions.
 
-- Common helpers used across multiple layers
-- Includes formatting, parsing, and shared logic
+- Shared across all layers  
+- Includes formatting, parsing, and common logic  
 
 ---
 
-### Logging and Observability Layer
+### Logging Layer
 
-Responsible for monitoring and diagnostics.
+Responsible for system monitoring.
 
-- Logs system events and errors
-- Integrated with Azure Application Insights
-- Enables tracking of user behavior and system performance
+- Registers events and errors  
+- Sends logs to Azure Application Insights via ApiClients  
 
 ---
 
@@ -659,28 +658,28 @@ Responsible for monitoring and diagnostics.
 
 Provides centralized error handling.
 
-- Captures and standardizes errors across all layers
-- Prevents application crashes
-- Ensures consistent error responses
+- Standardizes error responses  
+- Prevents application crashes  
+- Shared across all layers  
 
 ---
 
 ### Layer Interaction Rules
 
-- Components interact only with Hooks
-- Hooks interact with Services
-- Services interact with ApiClients, Utils, Models, and Settings
-- ApiClients interact with external APIs
-- All layers can use Models, Utils, and State Management
-- Cross-layer communication is handled through the Notification Layer
+- Components interact only with Hooks  
+- Hooks interact with Services  
+- Services interact with ApiClients, Utils, and Settings  
+- ApiClients interact with external APIs  
+- All layers can access Models, Utils, and State Management  
+- Asynchronous communication is handled through the Notification Service Layer  
 
 ---
 
 ### High-Level Flow
 
-User → Browser → Azure App Service → SSR → Authentication → Components → Hooks → Services → ApiClients → External APIs
+User → Browser → Azure App Service → SSR → Authentication → Components → Hooks → Services → ApiClients → External APIs  
 
-External APIs → Notification Layer → Services → Hooks → Components → UI Update
+External APIs → Notification Service → Services → Hooks → Components → UI Update  
 
 ## 1.6 Design Patterns: Design of classes and their respective locations in the project structure where object-oriented design patterns are applied when necessary. Examples include: security, UI refresh, notification handling, state storage, API calls, asynchronous operations, session invalidation, event-driven programming, and object creation.
 
