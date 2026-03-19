@@ -379,118 +379,144 @@ All components are compatible with `react-i18next v16.5.8`, ensuring that text c
 - **Accessibility**  
 Accessibility requirements are not considered within the scope of this implementation.
 
-## 1.4 Security: Technologies, techniques, and classes—along with their respective locations in the project structure—responsible for authentication, authorization of permissions, and session management.
+## 1.4 Security
+
+The frontend security design defines authentication, authorization, and session management mechanisms, including the responsible technologies, techniques, and classes within the project structure.
+
 ---
 
 ### Authentication
 
 - Identity Provider: Microsoft Entra ID  
 - Authentication Model: Single Sign-On (SSO)  
+- Multi-Factor Authentication (MFA): Enabled via mobile authenticator  
 - Protocol: OAuth 2.0 / OpenID Connect  
-- Libraries:
-  - `@azure/msal-browser`
-  - `@azure/msal-react`
+
+Authentication is fully delegated to Microsoft Entra ID using:
+
+- `@azure/msal-browser`
+- `@azure/msal-react`
 
 ---
 
 ### Authorization
 
-Authorization is enforced at two levels:
+The system uses Role-Based Access Control (RBAC).
 
-- Frontend:
-  - Route protection
-  - Permission validation based on roles/scopes
-- Backend:
-  - Token validation
-  - Enforcement of access control policies
+#### Roles
+
+- **Manager**
+- **Customs Agent**
+
+#### Permissions by Role
+
+**Manager**
+- `MANAGE_USERS` → Manage user CRUD operations  
+- `VIEW_REPORTS` → Access operational and performance reports  
+- `EDIT_TEMPLATES` → Modify DUA templates  
+
+**Customs Agent**
+- `LOAD_FILES` → Upload and configure document folders  
+- `GENERATE_DUA` → Start DUA generation process  
+- `DOWNLOAD_DUA` → Export generated DUA document  
+
+---
+
+### Frontend Authorization Strategy
+
+Authorization is enforced through:
+
+- Protected routes  
+- Permission-based UI rendering  
+- Route guards validating user roles and scopes  
 
 ---
 
 ### Session Management
 
-- Token acquisition and caching handled by MSAL
+- Token acquisition and caching handled by MSAL  
 - Storage strategy:
-  - `sessionStorage` for session persistence
-  - `memoryStorage` for stricter security (optional)
-- Session is cleared on logout
-- Cached data is invalidated after session termination
+  - `sessionStorage` for session persistence  
+  - `memoryStorage` (optional for higher security)  
+
+- Session lifecycle:
+  - Session starts after successful authentication  
+  - Session is invalidated on logout  
+  - Cached data is cleared after session termination  
+
+---
+
+### Security Classes and Location
+
+Security responsibilities are encapsulated in dedicated classes located within the frontend project structure:
+
+#### `/src/security/AuthService.ts`
+- Handles login, logout, and token acquisition  
+- Wraps MSAL functionality  
+
+#### `/src/security/SessionManager.ts`
+- Manages session lifecycle  
+- Handles token storage and cleanup  
+
+#### `/src/security/AuthorizationService.ts`
+- Validates user roles and permissions  
+- Provides helper methods such as:
+  - `hasRole(role)`
+  - `hasPermission(permission)`
+
+#### `/src/security/AuthGuard.tsx`
+- Protects routes and components  
+- Redirects unauthorized users  
 
 ---
 
 ### Data Storage Strategy
 
-#### 1. Public Configuration (Frontend)
+#### Public Configuration (Frontend)
 
-Stored in:
-- Azure App Service (Application Settings)
-- Environment variables per environment
+Stored as environment variables:
 
-Includes:
-- API base URL
-- Environment name
-- Application Insights configuration
-- Entra ID tenant ID and client ID
+- API base URL  
+- Environment name  
+- Entra ID tenant ID and client ID  
 
 ---
 
-#### 2. Sensitive Data
+#### Sensitive Data
 
 Stored in:
+
 - **Azure Key Vault**
 
 Includes:
-- API keys
-- Secrets
-- Certificates
-- Signing keys
-- Backend credentials
+- API keys  
+- Secrets  
+- Certificates  
 
----
-
-#### 3. CI/CD Secrets
-
-Stored in:
-- Azure DevOps Variable Groups
-- Azure DevOps linked to Azure Key Vault
-
----
-
-#### 4. Client-side State
-
-Stored in:
-- Zustand (non-sensitive only)
-
-Includes:
-- UI state
-- workflow progress
-- temporary configuration data
-
-Sensitive data is never stored in frontend state or browser storage.
+Sensitive data is never exposed to the frontend.
 
 ---
 
 ### Secure Storage Service
 
-- Azure Key Vault
+- Azure Key Vault  
 
-Used for:
-- Secrets
-- Keys
-- Certificates
-- Environment-sensitive configuration
+Used for secure storage of:
+- Secrets  
+- Keys  
+- Certificates  
 
-Access controlled through:
-- Azure RBAC
+Access controlled through Azure RBAC.
 
 ---
 
 ### Environment Configuration Flow
 
 1. Secrets stored in Azure Key Vault  
-2. Azure DevOps retrieves secrets via variable groups  
+2. Azure DevOps retrieves secrets securely  
 3. Deployment injects configuration into Azure App Service  
-4. Frontend consumes only non-sensitive environment variables  
-5. Backend accesses sensitive data securely from Key Vault  
+4. Frontend consumes only non-sensitive variables  
+5. Backend securely accesses sensitive data  
 
 
 ## 1.5 Layered Design: Design and explanation of the different layers of the frontend application.
