@@ -891,4 +891,89 @@ The combination of these patterns ensures:
 - Clear separation of concerns  
 - Robust handling of asynchronous workflows  
 
-## 1.7 Project Scaffold: A folder in /src containing the project scaffold, generated based on the full specification defined in sections 1.1 through 1.6.
+## 1.7 Project Scaffold (/src)
+
+The following folder structure represents the frontend scaffold derived from the defined technology stack, layered architecture, component strategy, and design patterns.
+
+```plaintext
+/src
+│
+├── app/                         # Next.js app entry (SSR routing)
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── providers.tsx            # Global providers (state, query, auth)
+│
+├── components/                  # Components Layer (Atomic Design)
+│   ├── atoms/
+│   ├── molecules/
+│   ├── organisms/
+│   ├── templates/
+│   └── pages/
+│
+├── hooks/                       # Hooks Layer
+│   ├── useAuth.ts
+│   ├── useGenerator.ts
+│   ├── useMonitoring.ts
+│   └── useExport.ts
+│
+├── services/                    # Services Layer
+│   ├── GeneratorService.ts
+│   ├── MonitoringService.ts
+│   ├── ExportService.ts
+│   ├── NotificationService.ts
+│   └── strategies/              # Strategy Pattern
+│       ├── GenerationStrategy.ts
+│       ├── ValidationStrategy.ts
+│       └── ExportStrategy.ts
+│
+├── api/                         # ApiClients Layer
+│   ├── adapters/                # Adapter Pattern
+│   │   ├── AuthApiAdapter.ts
+│   │   ├── GeneratorApiAdapter.ts
+│   │   ├── MonitoringApiAdapter.ts
+│   │   └── ExportApiAdapter.ts
+│   │
+│   ├── interceptors/            # Interceptor Pattern
+│   │   └── AxiosInterceptor.ts
+│   │
+│   └── client.ts                # Axios instance
+│
+├── security/                    # Security Layer
+│   ├── AuthService.ts
+│   ├── SessionManager.ts
+│   ├── AuthorizationService.ts
+│   └── AuthGuard.tsx
+│
+├── state/                       # State Management Layer
+│   ├── store.ts
+│   └── slices/
+│
+├── models/                      # Models Layer
+│   ├── DUA.ts
+│   ├── User.ts
+│   └── ProcessStatus.ts
+│
+├── validation/                  # Data Validation Layer (Zod)
+│   ├── schemas/
+│   └── validators.ts
+│
+├── config/                      # Settings Layer
+│   └── SettingsService.ts
+│
+├── utils/                       # Utils Layer
+│   ├── Logger.ts
+│   ├── formatter.ts
+│   └── helpers.ts
+│
+├── core/                        # Cross-cutting concerns
+│   └── ExceptionHandler.ts
+│
+├── i18n/                        # Internationalization
+│   ├── config.ts
+│   └── locales/
+│
+├── styles/                      # Global styles & design tokens
+│   └── globals.css
+│
+└── types/                       # Shared TypeScript types
+    └── index.ts
