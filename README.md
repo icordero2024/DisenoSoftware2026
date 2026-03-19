@@ -681,6 +681,214 @@ User → Browser → Azure App Service → SSR → Authentication → Components
 
 External APIs → Notification Service → Services → Hooks → Components → UI Update  
 
-## 1.6 Design Patterns: Design of classes and their respective locations in the project structure where object-oriented design patterns are applied when necessary. Examples include: security, UI refresh, notification handling, state storage, API calls, asynchronous operations, session invalidation, event-driven programming, and object creation.
+## 1.6 Design Patterns
+
+The frontend applies object-oriented design patterns to ensure scalability, maintainability, and clear separation of responsibilities across the application.
+
+---
+
+### Adapter Pattern
+
+Used to decouple frontend logic from backend API structures.
+
+#### Purpose
+- Transform API responses into frontend-friendly models  
+- Isolate changes in backend contracts  
+
+#### Classes and Location
+
+- `/src/api/adapters/AuthApiAdapter.ts`
+- `/src/api/adapters/GeneratorApiAdapter.ts`
+- `/src/api/adapters/MonitoringApiAdapter.ts`
+- `/src/api/adapters/ExportApiAdapter.ts`
+
+#### Responsibilities
+
+- Perform HTTP calls using axios  
+- Map responses to Models  
+- Handle API errors consistently  
+
+---
+
+### Observer Pattern (Notification Service)
+
+Used for event-driven communication and asynchronous updates.
+
+#### Purpose
+- Notify components about long-running processes  
+- Enable subscription to backend events  
+
+#### Classes and Location
+
+- `/src/services/NotificationService.ts`
+
+#### Responsibilities
+
+- Manage event subscriptions  
+- Dispatch updates to subscribers  
+- Handle callback-based communication for async processes  
+
+---
+
+### Singleton Pattern
+
+Used to ensure a single shared instance of critical services.
+
+#### Purpose
+- Centralize shared logic  
+- Avoid duplicated instances across the application  
+
+#### Classes and Location
+
+- `/src/security/AuthService.ts`
+- `/src/security/SessionManager.ts`
+- `/src/services/NotificationService.ts`
+- `/src/services/TelemetryService.ts`
+- `/src/config/SettingsService.ts`
+- `/src/utils/Logger.ts`
+
+#### Responsibilities
+
+- Maintain global state consistency  
+- Provide shared access to configuration and services  
+
+---
+
+### Strategy Pattern
+
+Used to define interchangeable behaviors for processing operations.
+
+#### Purpose
+- Allow different strategies for handling workflows such as:
+  - File validation  
+  - Data processing  
+  - Export behavior  
+
+#### Classes and Location
+
+- `/src/services/strategies/GenerationStrategy.ts`
+- `/src/services/strategies/ValidationStrategy.ts`
+- `/src/services/strategies/ExportStrategy.ts`
+
+#### Responsibilities
+
+- Define interchangeable algorithms  
+- Allow runtime selection of behavior  
+
+---
+
+### Factory Pattern
+
+Used for controlled object creation.
+
+#### Purpose
+- Centralize instantiation logic  
+- Avoid direct dependency on concrete implementations  
+
+#### Classes and Location
+
+- `/src/factories/ServiceFactory.ts`
+
+#### Responsibilities
+
+- Create service instances  
+- Provide configured objects based on context  
+
+---
+
+### State Management Pattern
+
+Implements centralized state handling.
+
+#### Purpose
+- Maintain predictable application state  
+- Synchronize UI with backend data  
+
+#### Implementation
+
+- React Query → Server state  
+- Zustand → Client state  
+
+#### Location
+
+- `/src/state/`
+
+---
+
+### Guard Pattern (Security)
+
+Used to protect routes and components.
+
+#### Purpose
+- Restrict access based on authentication and authorization  
+
+#### Classes and Location
+
+- `/src/security/AuthGuard.tsx`
+
+#### Responsibilities
+
+- Validate user session  
+- Check roles and permissions  
+- Redirect unauthorized users  
+
+---
+
+### Interceptor Pattern
+
+Used for cross-cutting concerns in API communication.
+
+#### Purpose
+- Automatically attach tokens to requests  
+- Handle global API errors  
+
+#### Classes and Location
+
+- `/src/api/interceptors/AxiosInterceptor.ts`
+
+#### Responsibilities
+
+- Inject authentication tokens  
+- Handle response errors globally  
+
+---
+
+### Error Handling Pattern
+
+Provides centralized exception management.
+
+#### Purpose
+- Standardize error handling across the application  
+- Prevent UI crashes  
+
+#### Classes and Location
+
+- `/src/core/ExceptionHandler.ts`
+
+---
+
+### Event-Driven Programming
+
+The system follows an event-driven approach for asynchronous operations.
+
+#### Purpose
+- Handle long-running processes (DUA generation)  
+- Update UI without blocking execution  
+
+#### Implementation
+
+- NotificationService (Observer pattern)  
+- React Query polling and cache invalidation  
+
+---
+
+### Summary
+
+The combination of these patterns ensures:
+
+- Loose coupling between layers  
+- Reusable and scalable components  
+- Clear separation of concerns  
+- Robust handling of asynchronous workflows  
 
 ## 1.7 Project Scaffold: A folder in /src containing the project scaffold, generated based on the full specification defined in sections 1.1 through 1.6.
