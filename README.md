@@ -29,21 +29,27 @@ This project aims to design an intelligent system capable of automating the read
 ## 1.1 Technology stack
 
 - Application Type: Web Application
-- Web Framework: React.js v19.2
+- Web Framework: Next.js v15.x (React v19.2)
 - Web Server: Node.js v21
 - Coding Language: TypeScript v5.9.3
+
 - Unit Testing Framework: Jest v30.2.0
 - Integration Testing Tool: Playwright v1.58.2
 - Data Validation Framework: Zod v3.23.8
-- Code Prettier Framework: Prettier v3.3.3
+
+- Code Formatter: Prettier v3.3.3
 - Code Style Framework: ESLint v9.10.0
+- Code Automation Task Tool: Husky v9.1.7
+
 - Cloud Service: Microsoft Azure
 - Hosted Service within Cloud: Azure App Service
+
 - Code Repository Service: Azure DevOps Repos
-- Code Automation Task Tool: Husky v9.1.7
 - CI/CD Pipelines Technology: Azure DevOps Pipelines
+
 - Environments: Development, QA, Staging, Production
 - Environment Deployment Tools: Azure DevOps Environments + Azure App Service Deployment Slots
+
 - Observability Framework: Azure Application Insights SDK v3.x
 
 ## 1.2 UX UI analysis: 
