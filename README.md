@@ -540,6 +540,16 @@ The frontend performs Server-Side Rendering (SSR) using Node.js and React in Azu
 
 ---
 
+### Authentication Layer
+
+Responsible for handling user authentication and session validation.
+
+- Integrates with Microsoft Entra ID using MSAL  
+- Manages authentication state and session lifecycle  
+- Controls access to protected resources before rendering UI components
+
+--- 
+
 ### Components Layer
 
 Responsible for rendering the user interface.
@@ -595,7 +605,7 @@ All requests and responses use Models validated by the Data Validation Layer.
 Manages application configuration.
 
 - Reads environment variables from Azure App Service  
-- Accesses secure configuration from Azure Key Vault  
+- Provides configuration values injected at build or runtime, sourced from Azure Key Vault through secure backend and deployment pipelines.
 - Provides API URLs, environment settings, and identifiers  
 
 ---
@@ -710,7 +720,7 @@ Used to decouple frontend logic from backend API structures.
 
 #### Responsibilities
 
-- Perform HTTP calls using axios  
+- Delegate HTTP communication to the ApiClients layer  
 - Map responses to Models  
 - Handle API errors consistently  
 
@@ -908,6 +918,7 @@ The following folder structure represents the frontend scaffold derived from the
 - [components](./src/components)
 - [config](./src/config)
 - [core](./src/core)
+- [factories](./src/factories)
 - [hooks](./src/hooks)
 - [i18n](./src/i18n)
 - [models](./src/models)
