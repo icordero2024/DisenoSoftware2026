@@ -902,9 +902,13 @@ The combination of these patterns ensures:
 The following folder structure represents the frontend scaffold derived from the defined technology stack, layered architecture, component strategy, and design patterns.
 
 
+
+- [app](./src/app)
 - [api](./src/api)
+- [components](./src/components)
 - [config](./src/config)
 - [core](./src/core)
+- [hooks](./src/hooks)
 - [i18n](./src/i18n)
 - [models](./src/models)
 - [security](./src/security)
@@ -913,4 +917,4 @@ The following folder structure represents the frontend scaffold derived from the
 - [styles](./src/styles)
 - [types](./src/types)
 - [utils](./src/utils)
-- [types](./src/types)
+- [validation](./src/validation)
