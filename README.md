@@ -1029,3 +1029,379 @@ The backend security design is aligned with the frontend authentication and auth
 - Security events and access logs are recorded using Azure Application Insights
 - Suspicious activity (e.g., failed authentication attempts) is monitored
 - Logs are protected and access-controlled
+
+
+### 2.3 Observability
+
+The backend observability strategy is aligned with the frontend, enabling end-to-end monitoring, traceability, and system diagnostics.
+
+---
+
+#### Event Logging
+
+The system records the following types of events:
+
+- Authentication events (login success, login failure, token validation)
+- API request lifecycle (request received, response sent, response time)
+- DUA generation process events (start, progress, completion, failure)
+- File processing events (document read, validation success/failure)
+- External API calls (request, response, errors)
+- Error and exception events
+- Rate limiting and security events
+- User actions related to core workflows (configuration, export)
+
+---
+
+#### Observability Platform
+
+- Azure Application Insights is used as the central observability platform
+- Integrated with both frontend and backend
+- Collects logs, metrics, traces, and performance data
+- Supports distributed tracing across services
+
+---
+
+#### Dashboards and Monitoring
+
+- Azure Monitor is used to create dashboards and visualize system metrics
+- Key dashboards include:
+  - API performance (latency, throughput)
+  - Error rates and failure analysis
+  - DUA processing status and success rate
+  - User activity and interaction patterns
+
+- Custom queries are created using Kusto Query Language (KQL) for advanced analysis
+
+---
+
+#### Alerting
+
+- Alerts are configured based on:
+  - High error rates
+  - API latency thresholds
+  - Failed DUA generation processes
+  - Unusual traffic patterns
+
+- Alerts are managed through Azure Monitor
+
+---
+
+#### Traceability
+
+- Each request is assigned a unique correlation ID
+- Correlation IDs are propagated across all layers
+- Enables full traceability from frontend to backend and external services
+
+
+### 2.4 Infrastructure (DevOps)
+
+The infrastructure and DevOps strategy is based on Microsoft Azure and Azure DevOps, enabling automated builds, deployments, and environment management.
+
+---
+
+#### CI/CD Automation
+
+- CI/CD processes are managed using Azure DevOps Pipelines
+- Pipelines are triggered automatically on code changes (push, pull requests)
+- Includes:
+  - Build validation
+  - Automated testing (unit and integration)
+  - Code quality checks (ESLint, Prettier)
+  - Artifact generation
+
+---
+
+#### Code Repository Integration
+
+- Source code is managed in Azure DevOps Repos
+- Monorepo structure shared between frontend and backend
+- Branching strategy:
+  - main (production)
+  - develop (integration)
+  - feature branches
+
+---
+
+#### Deployment Strategy
+
+- Deployments are automated using Azure DevOps Pipelines
+- Backend is deployed to Azure App Service
+
+Environment strategy:
+
+- Development:
+  - Continuous deployment enabled
+  - Used for active development and testing
+
+- QA / Staging:
+  - Deployment triggered after successful validation
+  - Used for integration testing and validation
+
+- Production:
+  - Manual approval required before deployment
+  - Stable and validated releases only
+
+---
+
+#### Environment Management
+
+- Environments are managed using Azure DevOps Environments
+- Azure App Service Deployment Slots are used:
+  - staging slot for pre-production validation
+  - production slot for live environment
+- Enables safe deployments and rollback strategies
+
+---
+
+#### Infrastructure as Code (IaC)
+
+- Infrastructure provisioning can be managed using:
+  - Azure Resource Manager (ARM) templates or Bicep
+
+- Defines:
+  - App Service configuration
+  - API Management
+  - Key Vault
+  - Monitoring resources
+
+---
+
+#### Secrets and Configuration Management
+
+- Secrets are stored in Azure Key Vault
+- Integrated with Azure DevOps through variable groups
+- No sensitive data is stored in the repository
+
+---
+
+#### Release Strategy
+
+- Incremental deployments through CI/CD pipelines
+- Version-controlled releases
+- Rollback supported via deployment slots
+
+### 2.5 Availability
+
+The system is designed to achieve high availability with a target uptime of 99.99%.
+
+---
+
+#### Availability Target
+
+- Target uptime: 99.99% annually
+- Maximum allowed downtime: ~52 minutes per year
+
+---
+
+#### High Availability Strategy
+
+The system leverages managed Azure services with built-in high availability:
+
+- Azure App Service:
+  - Provides automatic scaling and fault tolerance within a region
+  - SLA: 99.95% (single region)
+
+- Azure API Management:
+  - Ensures reliable API gateway availability
+  - Supports multi-region deployment (optional for higher availability)
+
+- Azure Key Vault:
+  - High availability for secrets and configuration management
+
+- Azure Application Insights:
+  - Monitoring and diagnostics for proactive issue detection
+
+---
+
+#### Single Points of Failure
+
+Potential single points of failure identified:
+
+- Single-region deployment of Azure App Service
+- API Management deployed in a single region
+- External API dependencies
+
+---
+
+#### Recovery and Mitigation Strategies
+
+To achieve the target availability, the following strategies are applied:
+
+- Multi-region deployment (optional enhancement):
+  - Deploy backend services in multiple Azure regions
+  - Use traffic routing (Azure Front Door) for failover
+
+- Deployment Slots:
+  - Zero-downtime deployments using staging and production slots
+
+- Retry and Resilience Policies:
+  - Implement retries and timeouts for external API calls
+
+- Health Checks:
+  - Continuous monitoring of service health
+
+- Backup and Recovery:
+  - Regular backups of configuration and critical data
+  - Fast recovery procedures for service restoration
+
+---
+
+#### Failure Handling
+
+- Failures are detected using Azure Monitor and Application Insights
+- Alerts are triggered for critical issues
+- Automated and manual recovery procedures are defined
+
+---
+
+#### Summary
+
+Although some Azure services provide 99.95% SLA by default, the system can achieve higher availability through redundancy, failover strategies, and proper monitoring and recovery mechanisms.
+
+### 2.6 Scalability
+
+The system is designed to handle increasing request loads by scaling key components of the architecture.
+
+---
+
+#### Scalable Components
+
+The following elements scale as the number of requests per minute increases:
+
+- Azure App Service:
+  - Supports horizontal scaling (scale-out by adding instances)
+  - Handles increased API traffic and concurrent requests
+
+- Azure API Management:
+  - Scales to handle increased API gateway traffic
+  - Manages request routing, throttling, and caching
+
+- Asynchronous Processing (Notification Hubs):
+  - Decouples long-running processes from user requests
+  - Allows the system to handle high loads without blocking operations
+
+- React Query (Frontend - Server State):
+  - Reduces backend load through caching and request deduplication
+  - Minimizes unnecessary API calls
+
+---
+
+#### Scaling Strategy
+
+- Horizontal scaling is preferred over vertical scaling
+- Auto-scaling rules can be configured based on:
+  - CPU usage
+  - Memory consumption
+  - Request count
+
+---
+
+#### Performance Optimization
+
+- Use of asynchronous processing for DUA generation tasks
+- Caching strategies to reduce repeated requests
+- Efficient API design to minimize payload size and processing time
+
+---
+
+#### Summary
+
+The system scales dynamically by increasing the number of service instances and optimizing request handling, ensuring consistent performance under higher loads.
+
+### 2.7 Backend Key Workflows
+
+This section defines the main backend workflows for the DUA Streamliner system, describing the sequence of operations performed by the backend services.
+
+---
+
+#### Upload Files to Generate DUA
+
+1. The backend receives a request containing the list of files to be uploaded.
+
+2. The backend validates the request metadata and authentication token.
+
+3. A streaming process is initiated to receive each file in raw binary format.
+
+4. Each file is processed sequentially or in parallel depending on size and configuration.
+
+5. The backend stores each file in Azure Blob Storage.
+
+6. Metadata for each file is recorded in the database (file name, type, size, upload date, and reference ID).
+
+7. The backend validates supported formats (PDF, DOCX, XLSX, images).
+
+8. If any file is invalid, the system flags it and continues processing the remaining files.
+
+9. Once all files are uploaded, the backend confirms successful storage.
+
+10. A processing job is created to start document analysis and DUA generation.
+
+11. The workflow triggers an asynchronous process for document reading and data extraction.
+
+---
+
+#### Setup DUA Template
+
+1. The backend receives a request to configure the DUA template.
+
+2. The system validates the template format and structure.
+
+3. The template is stored in Azure Blob Storage.
+
+4. Template metadata is registered in the database (version, format, upload date).
+
+5. The backend associates the selected template with the current DUA generation process.
+
+6. The system validates compatibility between uploaded documents and the selected template.
+
+7. If inconsistencies are detected, the system flags them for review.
+
+8. The configuration is stored and marked as ready for processing.
+
+---
+
+#### DUA Generation Process (Asynchronous)
+
+1. The backend starts the document processing job.
+
+2. Files are retrieved from Azure Blob Storage.
+
+3. Text extraction is performed:
+   - Structured data (Excel, Word)
+   - Unstructured data (PDF)
+   - OCR processing for images
+
+4. Extracted data is processed using semantic analysis.
+
+5. Relevant fields are identified (importer, goods, values, transport, etc.).
+
+6. Data is validated and normalized.
+
+7. Extracted information is mapped to the DUA template structure.
+
+8. Confidence levels are assigned to each field.
+
+9. The generated DUA document is created in .docx format.
+
+10. The result is stored in Azure Blob Storage.
+
+11. The process status is updated (completed / failed).
+
+12. A notification event is triggered to inform the frontend.
+
+---
+
+#### Export Generated DUA
+
+1. The backend receives a request to export the generated DUA.
+
+2. The system validates user authorization.
+
+3. The generated file is retrieved from Azure Blob Storage.
+
+4. The file is prepared for download.
+
+5. The backend returns the file to the client.
+
+6. The export event is logged for auditing purposes.
+
