@@ -929,3 +929,103 @@ The following folder structure represents the frontend scaffold derived from the
 - [types](./src/types)
 - [utils](./src/utils)
 - [validation](./src/validation)
+
+## 2. Backend Design
+
+### 2.1 Technology Stack
+
+- Architecture Style: Modular Monolith (Service-based architecture)
+
+- API Type: REST API over HTTPS
+
+- Cloud Provider: Microsoft Azure
+
+- API Gateway: Azure API Management
+
+- Hosting Service: Azure App Service
+
+- API Standard: OpenAPI Specification (Swagger)
+
+- Asynchronous Processing & Notifications: Azure Notification Hubs
+
+- Load Balancing: Not required for current scope
+
+- Backend Runtime: Node.js v21
+
+- Programming Language: TypeScript v5.9.3
+
+- Web Framework: Express.js
+
+- Repository Strategy: Monorepo (shared with frontend)
+
+- Backend Folder: /duabusiness
+
+### 2.2 Security
+
+The backend security design is aligned with the frontend authentication and authorization strategy, ensuring secure communication, data protection, and controlled access to resources.
+
+---
+
+#### Communication Security
+
+- All API communication is secured using HTTPS (TLS 1.2 or higher)
+- Data in transit is encrypted end-to-end between client and backend services
+
+---
+
+#### Authentication & Authorization
+
+- Authentication is handled using Microsoft Entra ID (OAuth 2.0 / OpenID Connect)
+- Access tokens (JWT) are required for all protected endpoints
+- Token validation is performed in the backend before processing any request
+- Role-based access control (RBAC) is enforced for protected operations
+
+---
+
+#### Data Encryption
+
+- Sensitive data stored in the database is encrypted using AES-256 encryption
+- Encryption keys are managed through Azure Key Vault
+- No sensitive data is stored in plain text
+
+---
+
+#### Payload Size Limits
+
+- Default maximum payload size: 10 MB
+- Exceptions allowed for document upload endpoints (up to 50 MB)
+- Payload limits are enforced at API Gateway (Azure API Management) level
+
+---
+
+#### Rate Limiting
+
+- Rate limiting is applied to prevent abuse and ensure availability
+- Maximum requests per client: 100 requests per minute
+- Concurrent request limit: 20 active requests per client
+- Policies enforced through Azure API Management
+
+---
+
+#### Data Retention Policy
+
+- Operational data is stored in production for up to 30 days
+- After this period, data is moved to an archive storage
+- Archived data is stored in a lower-cost storage tier (Azure Blob Storage Archive)
+- Data retention policies comply with audit and traceability requirements
+
+---
+
+#### Secure Configuration Management
+
+- Secrets and sensitive configurations are stored in Azure Key Vault
+- API keys, connection strings, and credentials are never hardcoded
+- Environment variables are injected during deployment via Azure DevOps
+
+---
+
+#### Logging and Monitoring Security
+
+- Security events and access logs are recorded using Azure Application Insights
+- Suspicious activity (e.g., failed authentication attempts) is monitored
+- Logs are protected and access-controlled
