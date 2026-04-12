@@ -1405,3 +1405,36 @@ This section defines the main backend workflows for the DUA Streamliner system, 
 
 6. The export event is logged for auditing purposes.
 
+
+### 2.8 Architecture Diagrams (C4 Model)
+
+The system architecture is described using the C4 model, including Context, Container, and Code diagrams.
+
+---
+
+## 2.8.1 Context Diagram
+
+This diagram shows the system boundaries and its interaction with external actors and systems.
+
+**Actors:**
+- End User (Importer / Exporter)
+- External Authentication Provider (Microsoft Entra ID)
+
+**External Systems:**
+- Azure Blob Storage
+- External Document Processing / OCR Services (optional)
+
+```mermaid
+graph TD
+
+User[End User]
+FE[Frontend Application (React)]
+BE[DUA Streamliner Backend]
+Auth[Microsoft Entra ID]
+Storage[Azure Blob Storage]
+
+User -->|Uses| FE
+FE -->|HTTPS REST API| BE
+FE -->|Authentication (OAuth2)| Auth
+BE -->|Validate Token| Auth
+BE -->|Store/Retrieve Files| Storage
