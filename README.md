@@ -1526,3 +1526,104 @@ GeneratorService --> NotificationService
 GeneratorService --> DUA
 
 ```
+
+### 2.9 Design Considerations
+
+This section defines key technical considerations that guide the backend design, ensuring consistency, maintainability, and scalability of the system.
+
+---
+
+#### System Configuration and Parameters
+
+- All system configurations are managed through environment variables
+- Configuration is injected at deployment time using Azure DevOps
+- Sensitive parameters are stored in Azure Key Vault
+- Includes:
+  - API base URLs
+  - Authentication settings (Entra ID)
+  - Storage configuration (Blob Storage)
+  - Feature flags and limits (payload size, rate limiting)
+
+---
+
+#### Resource Allocation
+
+- The backend is hosted on Azure App Service with scalable instances
+- Resource allocation includes:
+  - Memory and CPU managed by App Service Plan
+  - Auto-scaling rules based on CPU usage and request load
+- Networking is handled through Azure API Management and HTTPS endpoints
+- No dedicated load balancer is required at current scale (handled by Azure services)
+
+---
+
+#### Algorithms and Core Processing Logic
+
+- Document processing uses:
+  - Structured parsing for Excel and Word files
+  - Text extraction for PDFs
+  - OCR processing for scanned images
+
+- Semantic extraction logic:
+  - Identifies key entities (importer, goods, values, dates)
+  - Uses rule-based and AI-assisted interpretation
+
+- Data validation:
+  - Implemented using Zod schemas
+  - Ensures consistency before mapping to DUA template
+
+- Mapping algorithm:
+  - Transforms extracted data into DUA template structure
+  - Assigns confidence levels (high, medium, low)
+
+---
+
+#### Agent Prototypes
+
+The system defines logical agents responsible for specific processing tasks:
+
+- File Processing Agent:
+  - Handles file ingestion and validation
+
+- Extraction Agent:
+  - Performs text extraction and OCR processing
+
+- Mapping Agent:
+  - Maps extracted data into DUA structure
+
+- Validation Agent:
+  - Verifies data consistency and completeness
+
+- Notification Agent:
+  - Sends process updates to the frontend
+
+These agents are implemented as services within the backend.
+
+---
+
+#### Interfaces and Integration Points
+
+The backend integrates with external systems through defined interfaces:
+
+- Microsoft Entra ID:
+  - Authentication and token validation
+
+- Azure Blob Storage:
+  - File storage and retrieval
+
+- Azure Notification Hubs:
+  - Asynchronous communication and notifications
+
+- External OCR / AI services (optional):
+  - Advanced document processing
+
+---
+
+#### Proxies and Adapters
+
+- API communication is abstracted using Adapter pattern
+- ApiClients act as proxies for external services
+- Ensures:
+  - Decoupling from external APIs
+  - Easier maintenance and scalability
+  - Centralized error handling
