@@ -1428,13 +1428,13 @@ This diagram shows the system boundaries and its interaction with external actor
 graph TD
 
 User[End User]
-FE[Frontend Application (React)]
-BE[DUA Streamliner Backend]
+FE[Frontend React App]
+BE[DUA Backend]
 Auth[Microsoft Entra ID]
 Storage[Azure Blob Storage]
 
-User -->|Uses| FE
-FE -->|HTTPS REST API| BE
-FE -->|Authentication (OAuth2)| Auth
+User --> FE
+FE -->|HTTPS API| BE
+FE -->|OAuth2 Login| Auth
 BE -->|Validate Token| Auth
-BE -->|Store/Retrieve Files| Storage
+BE -->|Store Files| Storage
