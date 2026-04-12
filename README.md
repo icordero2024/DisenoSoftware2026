@@ -1438,3 +1438,91 @@ FE -->|HTTPS API| BE
 FE -->|OAuth2 Login| Auth
 BE -->|Validate Token| Auth
 BE -->|Store Files| Storage
+```
+## 2.8.2 Container Diagram
+
+This diagram describes the main system containers, their technologies, and interactions.
+
+**Containers:**
+
+- Frontend (React SPA)
+- Backend API (Node.js + Express)
+- API Gateway (Azure API Management)
+- Storage (Azure Blob Storage)
+- Monitoring (Application Insights)
+
+
+```mermaid
+graph TD
+
+User[User Browser]
+
+FE[React SPA\nTypeScript]
+APIM[Azure API Management]
+BE[Backend API\nNode.js + Express]
+Storage[Azure Blob Storage]
+AI[Application Insights]
+Auth[Microsoft Entra ID]
+
+User --> FE
+FE -->|HTTPS| APIM
+APIM -->|REST API| BE
+
+FE -->|Auth| Auth
+BE -->|Token Validation| Auth
+
+BE -->|Upload Files| Storage
+BE -->|Read Files| Storage
+
+BE -->|Logs & Metrics| AI
+FE -->|Telemetry| AI
+```
+
+## 2.8.3 Code Diagram (UML - High Level)
+
+This diagram represents the internal structure of the backend using classes and layers.
+
+**Layers:**
+
+- Controllers
+- Services
+- ApiClients
+- Models
+- Utils
+
+```mermaid
+
+classDiagram
+
+class UploadController {
+  +uploadFiles()
+  +validateRequest()
+}
+
+class GeneratorService {
+  +processDocuments()
+  +extractData()
+  +generateDUA()
+}
+
+class StorageService {
+  +uploadFile()
+  +getFile()
+}
+
+class NotificationService {
+  +sendNotification()
+}
+
+class DUA {
+  +id
+  +status
+  +confidenceLevel
+}
+
+UploadController --> GeneratorService
+GeneratorService --> StorageService
+GeneratorService --> NotificationService
+GeneratorService --> DUA
+
+```
