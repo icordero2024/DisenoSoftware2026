@@ -1981,3 +1981,31 @@ The backend integrates with external systems through defined interfaces:
   - Decoupling from external APIs
   - Easier maintenance and scalability
   - Centralized error handling
+
+
+### 2.7 Source Code
+
+The backend project scaffold is generated based on the defined architecture and design decisions.
+
+The structure follows a modular layered approach aligned with the system design.
+
+#### Project Structure
+
+- `/duabusiness/src/controllers`
+- `/duabusiness/src/services`
+- `/duabusiness/src/api-clients`
+- `/duabusiness/src/models`
+- `/duabusiness/src/validation`
+- `/duabusiness/src/middlewares`
+- `/duabusiness/src/config`
+- `/duabusiness/src/utils`
+- `/duabusiness/src/events`
+- 
+#### Key Classes
+
+- `DUAController`
+- `DUAService`
+- `StorageClient`
+- `AuthMiddleware`
+
+The scaffold contains only structural definitions without business logic implementation.
