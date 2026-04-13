@@ -1770,6 +1770,8 @@ The system architecture is described using the C4 model, including Context, Cont
 
 This diagram shows the system boundaries and its interaction with external actors and systems.
 
+Dua Streamliner System is divided into FrontEnd React App and DUA Backen
+
 **Actors:**
 - End User (Importer / Exporter)
 - External Authentication Provider (Microsoft Entra ID)
@@ -1782,16 +1784,15 @@ This diagram shows the system boundaries and its interaction with external actor
 graph TD
 
 User[End User]
-FE[Frontend React App]
-BE[DUA Backend]
+System[DUA Streamliner System]
 Auth[Microsoft Entra ID]
 Storage[Azure Blob Storage]
+OCR[External OCR Services]
 
-User --> FE
-FE -->|HTTPS API| BE
-FE -->|OAuth2 Login| Auth
-BE -->|Validate Token| Auth
-BE -->|Store Files| Storage
+User --> System
+System -->|Authenticate Users| Auth
+System -->|Store Files| Storage
+System -->|Process Documents| OCR
 ```
 ## 2.8.2 Container Diagram
 
