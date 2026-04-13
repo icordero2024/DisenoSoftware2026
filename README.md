@@ -934,143 +934,334 @@ The following folder structure represents the frontend scaffold derived from the
 
 ### 2.1 Technology Stack
 
-- Architecture Style: Modular Monolith (Service-based architecture)
+The backend design explicitly defines the application protocols, API style, business logic paradigm, and hosting model.
 
-- API Type: REST API over HTTPS
+---
 
-- Cloud Provider: Microsoft Azure
+#### Application and Transport Protocols
 
-- API Gateway: Azure API Management
+- Transport Protocol: HTTPS over TLS (HTTP/1.1 and HTTP/2)
+- All communication is secured using TLS encryption
+- HTTP/2 is preferred for improved performance in concurrent requests
 
-- Hosting Service: Azure App Service
+---
 
+#### API Style
+
+- API Type: REST API
 - API Standard: OpenAPI Specification (Swagger)
 
-- Asynchronous Processing & Notifications: Azure Notification Hubs
+REST is selected due to:
 
-- Load Balancing: Not required for current scope
+- Simplicity and wide adoption
+- Compatibility with web clients
+- Built-in support for HTTP caching and status codes
+- Ease of integration with external systems
 
-- Backend Runtime: Node.js v21
+---
 
+#### Business Logic Paradigm
+
+The system uses a hybrid approach:
+
+- Synchronous (Request/Response):
+  - Used for API operations such as authentication, configuration, and data retrieval
+
+- Asynchronous Processing:
+  - Used for DUA generation workflows (document processing, extraction, mapping)
+  - Implemented using event-driven patterns and notification mechanisms
+
+This approach ensures responsiveness while handling long-running operations efficiently.
+
+---
+
+#### API Exposure Layer
+
+- API Gateway: Azure API Management
+  - Handles routing, rate limiting, authentication, and monitoring
+  - Exposes documented endpoints using OpenAPI
+
+- No BFF layer is required due to a single frontend client
+
+---
+
+#### Hosting Model
+
+- Cloud Provider: Microsoft Azure
+- Hosting Service: Azure App Service (PaaS)
+
+This model provides:
+
+- Managed infrastructure
+- Automatic scaling capabilities
+- Simplified deployment and maintenance
+
+---
+
+#### Asynchronous Communication
+
+- Azure Notification Hubs is used for:
+  - Event notifications
+  - Process updates to the frontend
+  - Decoupling long-running operations
+
+---
+
+#### Backend Runtime and Framework
+
+- Runtime: Node.js v21
 - Programming Language: TypeScript v5.9.3
-
 - Web Framework: Express.js
 
-- Repository Strategy: Monorepo (shared with frontend)
+This stack is selected due to:
 
-- Backend Folder: /duabusiness
+- Alignment with frontend (TypeScript)
+- High performance for I/O operations
+- Strong ecosystem and developer productivity
+
+---
+
+#### Architecture Style
+
+- Modular Monolith (Service-based architecture)
+
+This approach allows:
+
+- Clear separation of concerns through services
+- Easier development and deployment compared to microservices
+- Future scalability towards distributed architecture if needed
+
+---
+
+#### Load Balancing
+
+- No explicit load balancer is required
+- Traffic distribution is handled by Azure App Service and API Management
+
+---
+
+#### Repository Strategy
+
+- Monorepo structure shared with frontend
+- Backend located in: `/duabusiness`
+
+This enables:
+
+- Shared configurations
+- Easier CI/CD integration
+- Consistent versioning
 
 ### 2.2 Security
 
-The backend security design is aligned with the frontend authentication and authorization strategy, ensuring secure communication, data protection, and controlled access to resources.
+The backend security design ensures secure communication, controlled access, and protection of sensitive data across all system components.
+
+---
+
+#### Authentication vs Authorization
+
+- Authentication is handled using Microsoft Entra ID (OAuth 2.0 / OpenID Connect)
+- Users authenticate via external identity provider (SSO)
+
+- Authorization is enforced in the backend using:
+  - JWT access tokens
+  - Role-Based Access Control (RBAC)
+  - Scope validation per endpoint
+
+---
+
+#### Token Management (JWT)
+
+- All protected endpoints require a valid JWT access token
+- Token validation includes:
+  - Signature verification
+  - Expiration validation
+  - Issuer and audience validation
+
+- Token policies:
+  - Short-lived tokens (recommended: 15–60 minutes)
+  - Token refresh handled via frontend (MSAL)
+  - No sensitive data stored inside tokens
 
 ---
 
 #### Communication Security
 
 - All API communication is secured using HTTPS (TLS 1.2 or higher)
-- Data in transit is encrypted end-to-end between client and backend services
+- Data in transit is encrypted end-to-end
+- HTTP requests without TLS are rejected
 
 ---
 
-#### Authentication & Authorization
+#### Data Encryption (At Rest)
 
-- Authentication is handled using Microsoft Entra ID (OAuth 2.0 / OpenID Connect)
-- Access tokens (JWT) are required for all protected endpoints
-- Token validation is performed in the backend before processing any request
-- Role-based access control (RBAC) is enforced for protected operations
-
----
-
-#### Data Encryption
-
-- Sensitive data stored in the database is encrypted using AES-256 encryption
+- Sensitive data is encrypted using AES-256
 - Encryption keys are managed through Azure Key Vault
-- No sensitive data is stored in plain text
+- Storage services (Azure Blob Storage) use server-side encryption by default
 
 ---
 
-#### Payload Size Limits
+#### Secrets Management
 
-- Default maximum payload size: 10 MB
-- Exceptions allowed for document upload endpoints (up to 50 MB)
-- Payload limits are enforced at API Gateway (Azure API Management) level
+- All secrets are stored in Azure Key Vault
+- Includes:
+  - API keys
+  - Connection strings
+  - Encryption keys
 
----
-
-#### Rate Limiting
-
-- Rate limiting is applied to prevent abuse and ensure availability
-- Maximum requests per client: 100 requests per minute
-- Concurrent request limit: 20 active requests per client
-- Policies enforced through Azure API Management
+- Secrets are never stored in source code or repositories
+- Access is controlled via Azure RBAC
 
 ---
 
-#### Data Retention Policy
+#### API Surface Protection
 
-- Operational data is stored in production for up to 30 days
-- After this period, data is moved to an archive storage
-- Archived data is stored in a lower-cost storage tier (Azure Blob Storage Archive)
-- Data retention policies comply with audit and traceability requirements
+- Rate limiting enforced via Azure API Management:
+  - 100 requests per minute per client
+  - Maximum 20 concurrent requests per client
+
+- Payload size limits:
+  - Default: 10 MB
+  - File upload endpoints: up to 50 MB
+
+- Input validation:
+  - Implemented using Zod schemas
+  - Prevents malformed or malicious data
+
+- Protection against OWASP API Top 10:
+  - Injection prevention via validation
+  - Authentication enforcement on all endpoints
+  - Proper error handling (no sensitive data exposure)
 
 ---
 
-#### Secure Configuration Management
+#### Network Security
 
-- Secrets and sensitive configurations are stored in Azure Key Vault
-- API keys, connection strings, and credentials are never hardcoded
-- Environment variables are injected during deployment via Azure DevOps
+- Backend services are deployed within Azure-managed infrastructure
+- Private access is enforced where applicable:
+  - Azure services accessed via secure endpoints
+  - Storage services restricted using access policies
+
+- No direct database exposure to public internet
+- API access controlled via API Management layer
 
 ---
 
-#### Logging and Monitoring Security
+#### Data Retention and Compliance
 
-- Security events and access logs are recorded using Azure Application Insights
-- Suspicious activity (e.g., failed authentication attempts) is monitored
-- Logs are protected and access-controlled
+- Operational data retention: 30 days
+- After retention period:
+  - Data is moved to Azure Blob Storage Archive tier
+
+- Logs and audit trails are maintained for compliance:
+  - Authentication events
+  - File processing events
+  - System errors
+
+- Data residency is aligned with Azure region configuration
+
+---
+
+#### Logging and Security Monitoring
+
+- Logs and telemetry are collected using Azure Application Insights
+- Security events monitored include:
+  - Failed authentication attempts
+  - Unauthorized access attempts
+  - Abnormal request patterns
+
+- Alerts can be configured for suspicious activity
 
 
 ### 2.3 Observability
 
-The backend observability strategy is aligned with the frontend, enabling end-to-end monitoring, traceability, and system diagnostics.
+The backend observability strategy ensures end-to-end monitoring, traceability, and performance analysis across the system.
 
 ---
 
-#### Event Logging
+#### Logs
 
-The system records the following types of events:
+- All logs are structured in JSON format
+- Each log entry includes:
+  - Timestamp
+  - Log level (info, warning, error)
+  - Correlation ID (trace-id)
+  - Service name
+  - Operation context
 
-- Authentication events (login success, login failure, token validation)
-- API request lifecycle (request received, response sent, response time)
-- DUA generation process events (start, progress, completion, failure)
-- File processing events (document read, validation success/failure)
-- External API calls (request, response, errors)
-- Error and exception events
-- Rate limiting and security events
-- User actions related to core workflows (configuration, export)
+- Logged events include:
+  - Authentication events (login success/failure, token validation)
+  - API request lifecycle (request received, response sent, latency)
+  - DUA generation workflow (start, progress, completion, failure)
+  - File processing events (validation, parsing)
+  - External API calls (requests, responses, errors)
+  - System errors and exceptions
+  - Rate limiting and security events
+
+---
+
+#### Metrics
+
+The system collects the following key metrics:
+
+- Latency:
+  - Average response time
+  - p95 and p99 latency
+
+- Traffic:
+  - Requests per second
+  - Active connections
+
+- Errors:
+  - Error rate per endpoint
+  - Failed requests percentage
+
+- Resource utilization:
+  - CPU usage
+  - Memory usage
+
+- Business metrics:
+  - DUA generation success rate
+  - Processing time per document batch
+
+Metrics are collected and visualized using Azure Application Insights and Azure Monitor.
+
+---
+
+#### Distributed Tracing
+
+- Distributed tracing is implemented using Azure Application Insights
+- Compatible with OpenTelemetry standards
+
+- Traces include:
+  - End-to-end request flow (frontend → backend → external services)
+  - API calls and dependencies
+  - Processing steps within DUA generation workflow
 
 ---
 
 #### Observability Platform
 
-- Azure Application Insights is used as the central observability platform
-- Integrated with both frontend and backend
-- Collects logs, metrics, traces, and performance data
-- Supports distributed tracing across services
+- Azure Application Insights is the central observability platform
+- Integrated across frontend and backend
+- Collects:
+  - Logs
+  - Metrics
+  - Traces
+  - Performance telemetry
 
 ---
 
 #### Dashboards and Monitoring
 
-- Azure Monitor is used to create dashboards and visualize system metrics
-- Key dashboards include:
-  - API performance (latency, throughput)
-  - Error rates and failure analysis
-  - DUA processing status and success rate
-  - User activity and interaction patterns
+- Azure Monitor is used to build dashboards and visualize metrics
 
-- Custom queries are created using Kusto Query Language (KQL) for advanced analysis
+- Key dashboards:
+  - API performance (latency, throughput)
+  - Error rate monitoring
+  - DUA processing performance
+  - User interaction patterns
+
+- Advanced queries are implemented using Kusto Query Language (KQL)
 
 ---
 
@@ -1078,43 +1269,86 @@ The system records the following types of events:
 
 - Alerts are configured based on:
   - High error rates
-  - API latency thresholds
+  - Latency thresholds (p95, p99)
   - Failed DUA generation processes
-  - Unusual traffic patterns
+  - Unusual traffic spikes
 
-- Alerts are managed through Azure Monitor
+- Alerts are managed via Azure Monitor
 
 ---
 
 #### Traceability
 
 - Each request is assigned a unique correlation ID
-- Correlation IDs are propagated across all layers
-- Enables full traceability from frontend to backend and external services
+- Correlation IDs are propagated across all services and layers
+- Enables full traceability across the system
+
+---
+
+#### Health Checks
+
+- Liveness checks:
+  - Verify that the application is running
+
+- Readiness checks:
+  - Verify that dependencies (storage, external services) are available
+
+- Health endpoints are exposed for monitoring and deployment validation
+
+---
+
+#### Service Level Indicators (SLIs)
+
+The system defines the following SLIs:
+
+- Availability: API uptime percentage
+- Latency: response time (p95, p99)
+- Error rate: percentage of failed requests
+- Throughput: requests per second
+
+These indicators are used to monitor system reliability and performance
 
 
 ### 2.4 Infrastructure (DevOps)
 
-The infrastructure and DevOps strategy is based on Microsoft Azure and Azure DevOps, enabling automated builds, deployments, and environment management.
+The infrastructure and DevOps strategy is based on Microsoft Azure and Azure DevOps, enabling automated builds, deployments, and environment consistency.
+
+---
+
+#### Infrastructure as Code (IaC)
+
+- Infrastructure is defined using Bicep (Azure-native IaC)
+- All resources are version-controlled and reproducible
+
+- Includes:
+  - Azure App Service
+  - Azure API Management
+  - Azure Key Vault
+  - Azure Application Insights
 
 ---
 
 #### CI/CD Automation
 
-- CI/CD processes are managed using Azure DevOps Pipelines
-- Pipelines are triggered automatically on code changes (push, pull requests)
-- Includes:
-  - Build validation
-  - Automated testing (unit and integration)
-  - Code quality checks (ESLint, Prettier)
+- CI/CD pipelines are implemented using Azure DevOps Pipelines
+- Pipelines are triggered on:
+  - Code push
+  - Pull requests
+
+- Pipeline stages include:
+  - Build and dependency installation
+  - Unit and integration testing
+  - Code quality validation (ESLint, Prettier)
   - Artifact generation
+  - Deployment to environments
 
 ---
 
-#### Code Repository Integration
+#### Repository Strategy
 
 - Source code is managed in Azure DevOps Repos
 - Monorepo structure shared between frontend and backend
+
 - Branching strategy:
   - main (production)
   - develop (integration)
@@ -1122,67 +1356,77 @@ The infrastructure and DevOps strategy is based on Microsoft Azure and Azure Dev
 
 ---
 
+#### Environment Strategy
+
+- Environments:
+  - Development
+  - QA / Staging
+  - Production
+
+- Environment parity is maintained to ensure consistency across deployments
+
+- Non-production environments use:
+  - Synthetic or anonymized data
+  - Isolated configurations
+
+---
+
 #### Deployment Strategy
 
-- Deployments are automated using Azure DevOps Pipelines
-- Backend is deployed to Azure App Service
+- Deployments are automated through Azure DevOps Pipelines
 
-Environment strategy:
-
-- Development:
-  - Continuous deployment enabled
-  - Used for active development and testing
-
-- QA / Staging:
-  - Deployment triggered after successful validation
-  - Used for integration testing and validation
-
-- Production:
-  - Manual approval required before deployment
-  - Stable and validated releases only
-
----
-
-#### Environment Management
-
-- Environments are managed using Azure DevOps Environments
 - Azure App Service Deployment Slots are used:
-  - staging slot for pre-production validation
-  - production slot for live environment
-- Enables safe deployments and rollback strategies
+  - staging slot for validation
+  - production slot for live traffic
+
+- Deployment model:
+  - Blue/Green deployment using deployment slots
+  - Enables zero-downtime releases
+  - Supports instant rollback in case of failure
+
+- Production deployments require manual approval
 
 ---
 
-#### Infrastructure as Code (IaC)
+#### Containerization Strategy
 
-- Infrastructure provisioning can be managed using:
-  - Azure Resource Manager (ARM) templates or Bicep
+- Backend services are container-ready (Docker-compatible)
+- Containerization enables future migration to:
+  - Azure Container Apps
+  - Azure Kubernetes Service (AKS)
 
-- Defines:
-  - App Service configuration
-  - API Management
-  - Key Vault
-  - Monitoring resources
+- Container images are:
+  - Immutable
+  - Versioned
+
+- Security practices:
+  - Vulnerability scanning of images before deployment
+  - Secure base images
 
 ---
 
 #### Secrets and Configuration Management
 
 - Secrets are stored in Azure Key Vault
-- Integrated with Azure DevOps through variable groups
-- No sensitive data is stored in the repository
+- Integrated with Azure DevOps via variable groups
+- Includes:
+  - API keys
+  - Connection strings
+  - Certificates
+
+- No sensitive data is stored in source code
 
 ---
 
 #### Release Strategy
 
-- Incremental deployments through CI/CD pipelines
-- Version-controlled releases
+- Incremental and version-controlled deployments
 - Rollback supported via deployment slots
+- Monitoring is used to validate release health after deployment
 
 ### 2.5 Availability
 
-The system is designed to achieve high availability with a target uptime of 99.99%.
+The system is designed to achieve high availability with a target uptime of 99.99%, balancing cost and operational complexity.
 
 ---
 
@@ -1195,118 +1439,228 @@ The system is designed to achieve high availability with a target uptime of 99.9
 
 #### High Availability Strategy
 
-The system leverages managed Azure services with built-in high availability:
+The system leverages Azure managed services with built-in redundancy:
 
 - Azure App Service:
-  - Provides automatic scaling and fault tolerance within a region
-  - SLA: 99.95% (single region)
+  - Deployed across multiple availability zones within a region (where supported)
+  - Provides fault tolerance and automatic scaling
 
 - Azure API Management:
-  - Ensures reliable API gateway availability
-  - Supports multi-region deployment (optional for higher availability)
+  - Acts as resilient API gateway
+  - Can be deployed in multi-region mode for higher availability
 
-- Azure Key Vault:
-  - High availability for secrets and configuration management
+- Azure Storage (Blob Storage):
+  - Geo-redundant storage (GRS) for data durability
 
-- Azure Application Insights:
-  - Monitoring and diagnostics for proactive issue detection
+---
+
+#### Multi-Region Strategy
+
+- Deployment model: Active-Passive
+
+- Primary region:
+  - Handles all traffic under normal conditions
+
+- Secondary region:
+  - Activated in case of failure (failover)
+
+- Traffic routing:
+  - Managed via Azure Front Door
+
+This approach balances availability and cost.
+
+---
+
+#### Database Availability
+
+- Storage layer uses Azure-managed redundancy
+- Data is replicated using geo-redundant storage
+
+- Failover strategy:
+  - Automatic failover supported by Azure services
+  - Backup and restore mechanisms available
 
 ---
 
 #### Single Points of Failure
 
-Potential single points of failure identified:
+Potential risks identified:
 
-- Single-region deployment of Azure App Service
-- API Management deployed in a single region
+- Single-region deployment (if multi-region not enabled)
 - External API dependencies
+- Notification service dependency
 
 ---
 
-#### Recovery and Mitigation Strategies
+#### Resilience Patterns
 
-To achieve the target availability, the following strategies are applied:
+The system applies the following resilience patterns:
 
-- Multi-region deployment (optional enhancement):
-  - Deploy backend services in multiple Azure regions
-  - Use traffic routing (Azure Front Door) for failover
+- Retry with exponential backoff:
+  - Applied to external API calls and storage operations
 
-- Deployment Slots:
-  - Zero-downtime deployments using staging and production slots
+- Timeout control:
+  - Prevents long-running or stuck requests
 
-- Retry and Resilience Policies:
-  - Implement retries and timeouts for external API calls
+- Circuit Breaker:
+  - Stops repeated calls to failing services
 
-- Health Checks:
-  - Continuous monitoring of service health
-
-- Backup and Recovery:
-  - Regular backups of configuration and critical data
-  - Fast recovery procedures for service restoration
+- Bulkhead:
+  - Isolates critical components to avoid cascading failures
 
 ---
 
-#### Failure Handling
+#### Controlled Degradation
+
+In case of partial system failure:
+
+- Feature flags can disable non-critical features
+- Partial responses may be returned when full processing is unavailable
+- Asynchronous processing queues absorb temporary load spikes
+
+---
+
+#### Deployment Resilience
+
+- Blue/Green deployment using App Service slots
+- Zero-downtime releases
+- Immediate rollback capability
+
+---
+
+#### Monitoring and Recovery
 
 - Failures are detected using Azure Monitor and Application Insights
-- Alerts are triggered for critical issues
-- Automated and manual recovery procedures are defined
+- Alerts are triggered for:
+  - High error rates
+  - Service unavailability
+  - Latency spikes
+
+- Recovery strategies:
+  - Automatic failover (if multi-region enabled)
+  - Manual intervention procedures
+  - Backup restoration when needed
 
 ---
 
 #### Summary
 
-Although some Azure services provide 99.95% SLA by default, the system can achieve higher availability through redundancy, failover strategies, and proper monitoring and recovery mechanisms.
+Although some Azure services provide 99.95% SLA by default, the system achieves higher availability through multi-region failover, redundancy, resilience patterns, and controlled degradation strategies.
 
 ### 2.6 Scalability
 
-The system is designed to handle increasing request loads by scaling key components of the architecture.
+The system is designed to scale efficiently under increasing load by applying horizontal scaling, asynchronous processing, and caching strategies.
 
 ---
 
-#### Scalable Components
+#### Scalability Approach
 
-The following elements scale as the number of requests per minute increases:
+- Horizontal scaling (scale-out) is the primary strategy
+- Vertical scaling is used only when necessary
 
-- Azure App Service:
-  - Supports horizontal scaling (scale-out by adding instances)
-  - Handles increased API traffic and concurrent requests
-
-- Azure API Management:
-  - Scales to handle increased API gateway traffic
-  - Manages request routing, throttling, and caching
-
-- Asynchronous Processing (Notification Hubs):
-  - Decouples long-running processes from user requests
-  - Allows the system to handle high loads without blocking operations
-
-- React Query (Frontend - Server State):
-  - Reduces backend load through caching and request deduplication
-  - Minimizes unnecessary API calls
+- Scaling is applied to:
+  - API layer (App Service)
+  - API Gateway (API Management)
+  - Storage and processing components
 
 ---
 
-#### Scaling Strategy
+#### Stateless Application Layer
 
-- Horizontal scaling is preferred over vertical scaling
-- Auto-scaling rules can be configured based on:
-  - CPU usage
-  - Memory consumption
-  - Request count
+- The backend is designed as stateless:
+  - No session data is stored in server memory
+
+- Session handling:
+  - Authentication is based on JWT tokens
+  - No server-side session storage required
+
+- Benefits:
+  - Enables horizontal scaling
+  - Simplifies load balancing
 
 ---
 
-#### Performance Optimization
+#### Asynchronous Processing
 
-- Use of asynchronous processing for DUA generation tasks
-- Caching strategies to reduce repeated requests
-- Efficient API design to minimize payload size and processing time
+- Heavy operations (DUA generation, file processing) are handled asynchronously
+
+- Strategy:
+  - Tasks are decoupled from API requests
+  - Notifications are sent via Azure Notification Hubs
+
+- This allows:
+  - High request throughput
+  - Non-blocking user experience
+
+---
+
+#### Caching Strategy
+
+- Caching is used to reduce backend load and improve response times
+
+- Potential caching layers:
+  - Azure Cache for Redis:
+    - API responses
+    - Frequently accessed data
+
+  - Frontend caching:
+    - React Query for request deduplication
+
+- Benefits:
+  - Reduced latency
+  - Lower backend resource consumption
+
+---
+
+#### Data Scalability
+
+- Data storage is designed to scale using Azure-managed services
+
+- Future scalability strategies:
+  - Data partitioning if dataset grows significantly
+  - Separation of storage by domain (documents vs metadata)
+
+---
+
+#### Bottlenecks and Scaling Points
+
+Potential bottlenecks identified:
+
+- File upload endpoints (large payloads)
+- Document processing and extraction
+- External API dependencies (OCR / AI services)
+
+Mitigation strategies:
+
+- Asynchronous processing
+- Rate limiting
+- Caching
+- Retry mechanisms
+
+---
+
+#### Auto-Scaling Strategy
+
+- Auto-scaling rules configured based on:
+  - CPU utilization
+  - Memory usage
+  - Requests per second (RPS)
+  - Queue length (for async processing)
+
+- Scaling limits are defined to control operational costs
+
+---
+
+#### Content Delivery Optimization
+
+- Static assets can be served through CDN (optional enhancement)
+- Reduces latency for global users
 
 ---
 
 #### Summary
 
-The system scales dynamically by increasing the number of service instances and optimizing request handling, ensuring consistent performance under higher loads.
+The system achieves scalability through stateless design, horizontal scaling, asynchronous processing, and caching, ensuring consistent performance as demand increases.
 
 ### 2.7 Backend Key Workflows
 
